@@ -29,15 +29,15 @@ public class Assert extends Command {
 	}
 
 	@Override
-	public Block translate(CodeSignature where, Block continuation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	protected void toDotAux(FileWriter where) throws java.io.IOException {
 		linkToNode("condition", condition.toDot(where), where);
 		
+	}
+
+	@Override
+	public Block translate(Block continuation) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
