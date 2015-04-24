@@ -152,6 +152,9 @@ String myString = "";
 <YYINITIAL>while        {return tok(sym.WHILE, null);}
 <YYINITIAL>for          {return tok(sym.FOR, null);}
 <YYINITIAL>method       {return tok(sym.METHOD, null);}
+<YYINITIAL>test         {return tok(sym.TEST, null);} 		
+<YYINITIAL>assert       {return tok(sym.ASSERT, null);}     
+<YYINITIAL>fixture      {return tok(sym.FIXTURE, null);}    
 <YYINITIAL>field        {return tok(sym.FIELD, null);}
 <YYINITIAL>constructor  {return tok(sym.CONSTRUCTOR, null);}
 <YYINITIAL>if           {return tok(sym.IF, null);}

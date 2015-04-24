@@ -68,7 +68,7 @@ terminal CLASS, EXTENDS, FIELD, METHOD, CONSTRUCTOR, NEW,
 	 LBRACK, RBRACK, LBRACE, RBRACE, DOT, PLUS, MINUS, 
 	 TIMES, DIVIDE, EQ, NEQ, LT, LE, GT, GE, AND, OR, NOT,
 	 ASSIGN, ARRAYSYMBOL, IF, THEN, ELSE, WHILE, FOR, 
-	 RETURN, NIL, TRUE, FALSE, UMINUS;
+	 RETURN, NIL, TRUE, FALSE, UMINUS, TEST, ASSERT, FIXTURE;
 
 
 //           abstract syntax class   non-terminal
@@ -85,6 +85,7 @@ non terminal ExpressionSeq           expseq_aux;
 non terminal Lvalue                  lvalue;
 non terminal TypeExpression          type;
 non terminal TypeExpression          typeplus;
+
 
 // This avoids to signal a conflict, which would anyway be correctly handled
 precedence nonassoc THEN;
@@ -107,7 +108,7 @@ start with class;
 
 lvalue ::=
      ID:id
-     {: RESULT = new Variable(idleft, id); :}
+     {: RESULT = new Variable(idleft, id); :} // generare la sintassi astratta
    | exp:receiver DOT:d ID:field
      {: RESULT = new FieldAccess(dleft,receiver, field); :}
    | exp:array LBRACK:b exp:index RBRACK
@@ -115,7 +116,7 @@ lvalue ::=
 
 
 // Kitten value types. ID represents class types
-
+// tleft, idleft il punto dove c'è un errore nel codice
 type ::=
      ID:id
      {: RESULT = new ClassTypeExpression(idleft, id); :}
@@ -162,8 +163,14 @@ class_members ::=
    | METHOD:m typeplus:returnType ID:name LPAREN formals:formals RPAREN
        com:body class_members:next
      {: RESULT = new MethodDeclaration
-	(mleft, returnType, name, formals, body, next); :} ;
+	(mleft, returnType, name, formals, body, next); :} 
+   | TEST:t ID:name com:body class_members:next
+     {: RESULT = new TestDeclaration(tleft, name, body, next); :} // constructor
+   | FIXTURE:x com:body class_members:next
+     {: RESULT = new FixtureDeclaration(xleft, body, next); :};
 
+	  
+     
 // a comma-separated and possibly empty list
 // of formal parameters of a method or constructor
 
@@ -206,8 +213,12 @@ com ::=
    | LBRACE:p RBRACE
      {: RESULT = new Skip(pleft); :}
    | exp:receiver DOT:d ID:name LPAREN expseq:actuals RPAREN
-     {: RESULT = new MethodCallCommand(dleft, receiver, name, actuals); :} ;
+     {: RESULT = new MethodCallCommand(dleft, receiver, name, actuals); :}
+   | ASSERT:a LPAREN exp:condition RPAREN 
+     {: RESULT = new Assert(aleft, condition); :}; // return
 
+     
+     
 // a non-empty sequence of commands
 
 comseq ::=

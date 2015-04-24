@@ -1,4 +1,21 @@
 class Miao {
-  method void main()
-    "miao\n".output()
+
+	field int n
+
+	constructor(int n)
+		this.n := n
+
+
+	method void scramble()
+		for(int j := 0; j <= 4; j := j + 1)
+				"2\n".output()
+	
+	
+  method void main(){
+  	Miao m := new Miao(1);
+  	m.scramble();
+  	
+  	for(int a := 3; a < 5; a := a+1)	
+    	"miao\n".output()
+   }
 }
