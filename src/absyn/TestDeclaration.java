@@ -3,12 +3,22 @@ package absyn;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import translation.Block;
 import types.ClassMemberSignature;
 import types.ClassType;
+import types.TestSignature;
 
 public class TestDeclaration extends ClassMemberDeclaration {
 	private final String name;
 	private final Command body;
+	private TestSignature sig;
+	 /**
+     * The intermediate Kitten code for this constructor or method.
+     * This is {@code null} if this constructor or method has not been
+     * translated yet.
+     */
+
+    private Block code;
 	
 	public TestDeclaration(int pos, String name, Command body, ClassMemberDeclaration next){
 		super(pos, next);
@@ -31,8 +41,8 @@ public class TestDeclaration extends ClassMemberDeclaration {
 
 	@Override
 	protected void addTo(ClassType clazz) {
-		// TODO Auto-generated method stub
-
+		this.sig = new TestSignature(name, clazz, this);
+		clazz.addTest(name, sig);
 	}
 
 	@Override
@@ -43,5 +53,9 @@ public class TestDeclaration extends ClassMemberDeclaration {
 
 	private Command getBody(){
 		return body;
+	}
+	
+	private Block getBlock(){
+		return code;
 	}
 }
