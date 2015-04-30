@@ -3,11 +3,21 @@ package absyn;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import translation.Block;
 import types.ClassMemberSignature;
 import types.ClassType;
+import types.FixtureSignature;
 
 public class FixtureDeclaration extends ClassMemberDeclaration {
 	private final Command body;
+	 /**
+     * The intermediate Kitten code for this constructor or method.
+     * This is {@code null} if this constructor or method has not been
+     * translated yet.
+     */
+
+    private Block code;
+    private FixtureSignature sig;
 	
 	//new FixtureDeclaration(xleft, body, next);
 	public FixtureDeclaration(int pos, Command body, ClassMemberDeclaration next){
@@ -29,8 +39,8 @@ public class FixtureDeclaration extends ClassMemberDeclaration {
 
 	@Override
 	protected void addTo(ClassType clazz) {
-		// TODO Auto-generated method stub
-
+		this.sig = new FixtureSignature(clazz, this);
+		clazz.addFixture(sig);
 	}
 
 	@Override
@@ -41,5 +51,9 @@ public class FixtureDeclaration extends ClassMemberDeclaration {
 
 	private Command getBody(){
 		return this.body;
+	}
+	
+	private Block getBlock(){
+		return code;
 	}
 }
