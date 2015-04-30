@@ -84,6 +84,20 @@ public final class ClassType extends ReferenceType {
 	 */
 	
 	private boolean typeChecked;
+	
+	/**
+	 * La mappa nomeTest e la signature del Test.
+	 */
+	private final Map<String, TestSignature> tests = new HashMap();
+	
+	/**
+	 * Il set di Fixture signatures.
+	 */
+	private final Set<FixtureSignature> fixtures = new HashSet();
+	
+	
+	
+	
 
 	/**
 	 * Constructs a class type with the given name. If the class
@@ -258,6 +272,24 @@ public final class ClassType extends ReferenceType {
 	}
 
 	/**
+	 * Si aggiunge un Test per questa classe.
+	 * @param name Nome del Test.
+	 * @param sig La signature.
+	 */
+	public void addTest(String name, TestSignature sig){
+		this.tests.put(name, sig);
+	}
+	
+	/**
+	 * Si aggiunge un Fixture per questa classe.
+	 * @param sig La signature.
+	 */
+	public void addFixture(FixtureSignature sig){
+		this.fixtures.add(sig);
+	}
+	
+	
+	/**
 	 * Adds a field to this class. If a field with the given name
 	 * already existed, it is overwritten.
 	 *
@@ -298,6 +330,27 @@ public final class ClassType extends ReferenceType {
 		set.add(sig);
 	}
 
+	
+	
+	
+	
+	
+	/**
+	 * Si ritorna i Test di questa classe.
+	 * @return I test.
+	 */
+	public Map<String, TestSignature> getTests(){
+		return this.tests;
+	}
+	
+	/**
+	 * Si ritorna i Fixture di questa classe.
+	 * @return I fixture.
+	 */
+	public Set<FixtureSignature> getFixtures(){
+		return this.fixtures;
+	}
+	
 	/**
 	 * Yields the fields of this class.
 	 *
@@ -328,6 +381,35 @@ public final class ClassType extends ReferenceType {
 		return methods;
 	}
 
+	
+	
+	
+	
+	/**
+	 * Si cerca in questa classe la segnature del Test con nome name.
+	 * @param name Nome del Test.
+	 * @return La segnature del Test.
+	 */
+	public TestSignature testLookup(String name){
+		TestSignature res;
+		
+		if((res = this.tests.get(name)) != null)
+			return res;
+		
+		return null;		
+	}
+	
+	/**
+	 * Si ritorna un set di signatures di Fixture.
+	 * @return
+	 */
+	public Set<FixtureSignature> fixtureLookup(){
+				
+		return this.fixtures;
+	}
+	
+	
+	
 	/**
 	 * Looks up from this class for the signature of the field
 	 * with the given name, if any.
@@ -492,7 +574,7 @@ public final class ClassType extends ReferenceType {
 			for (T sig2: result)
 				if (sig != sig2 && sig.getParameters().canBeAssignedTo(sig2.getParameters()))
 					toBeRemoved.add(sig2);
-
+		
 		result.removeAll(toBeRemoved);
 
 		return result;
