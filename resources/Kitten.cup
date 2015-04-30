@@ -165,9 +165,9 @@ class_members ::=
      {: RESULT = new MethodDeclaration
 	(mleft, returnType, name, formals, body, next); :} 
    | TEST:t ID:name com:body class_members:next
-     {: RESULT = new TestDeclaration(tleft, name, body, next); :} // constructor
-   | FIXTURE:x com:body class_members:next
-     {: RESULT = new FixtureDeclaration(xleft, body, next); :};
+     {: RESULT = new TestDeclaration(tleft, name, body, next); :} 
+   | FIXTURE:f com:body class_members:next
+     {: RESULT = new FixtureDeclaration(fleft, body, next); :};
 
 	  
      
@@ -215,7 +215,7 @@ com ::=
    | exp:receiver DOT:d ID:name LPAREN expseq:actuals RPAREN
      {: RESULT = new MethodCallCommand(dleft, receiver, name, actuals); :}
    | ASSERT:a LPAREN exp:condition RPAREN 
-     {: RESULT = new Assert(aleft, condition); :}; // return
+     {: RESULT = new Assert(aleft, condition); :};
 
      
      
