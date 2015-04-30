@@ -403,8 +403,7 @@ public final class ClassType extends ReferenceType {
 	 * Si ritorna un set di signatures di Fixture.
 	 * @return
 	 */
-	public Set<FixtureSignature> fixtureLookup(){
-				
+	public Set<FixtureSignature> fixtureLookup(){			
 		return this.fixtures;
 	}
 	
