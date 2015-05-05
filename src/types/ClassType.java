@@ -336,7 +336,7 @@ public final class ClassType extends ReferenceType {
 	
 	
 	/**
-	 * Si ritorna i Test di questa classe.
+	 * Si ritorna i Test di questa classe. Test
 	 * @return I test.
 	 */
 	public Map<String, TestSignature> getTests(){
