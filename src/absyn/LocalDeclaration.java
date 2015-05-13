@@ -119,7 +119,7 @@ public class LocalDeclaration extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
 		// we type check the declared type of the variable
 		Type left = type.typeCheck();
 
