@@ -13,8 +13,8 @@ import translation.Block;
  * @author  <A HREF="mailto:fausto.spoto@univr.it">Fausto Spoto</A>
  */
 
-public abstract class Command extends Absyn {
-
+public abstract class Command extends Absyn { 
+	
 	/**
 	 * The type-checker resulting after the last type-checking of this command.
 	 * This is {@code null} if this command has not been type-checked yet.
@@ -90,10 +90,10 @@ public abstract class Command extends Absyn {
 	 *         this and the subsequent commands
 	 */
 
-	public final TypeChecker typeCheck(TypeChecker checker) {
+	public final TypeChecker typeCheck(TypeChecker checker, String err) {
 		// we perform the command-specific type-checking and record
 		// the resulting type-checker
-		return this.checker = checker = typeCheckAux(this.checker = checker);
+		return this.checker = checker = typeCheckAux(this.checker = checker, err);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public abstract class Command extends Absyn {
 	 * @return the type-checker resulting from the type-checking of the command
 	 */
 
-	protected abstract TypeChecker typeCheckAux(TypeChecker checker);
+	protected abstract TypeChecker typeCheckAux(TypeChecker checker, String err);
 
 	/**
 	 * Checks that this command does not contain <i>dead-code</i>, that is,
