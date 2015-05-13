@@ -12,7 +12,7 @@ import semantical.TypeChecker;
  */
 
 public abstract class Absyn {
-
+	
 	/**
 	 * The position in the source file of the beginning of the concrete
 	 * syntax represented by this abstract syntax.
@@ -56,6 +56,7 @@ public abstract class Absyn {
 		// no type-checking error at the beginning
 		this.typeError = null;
 	}
+	
 
 	/**
 	 * Yields the starting position in the source file of
