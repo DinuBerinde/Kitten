@@ -68,8 +68,8 @@ public class CommandSeq extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
-		return second.typeCheck(first.typeCheck(checker));
+	protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
+		return second.typeCheck(first.typeCheck(checker, name), name);
 	}
 
 	/**
