@@ -159,4 +159,5 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
     	for (Block follow: block.getFollows())
     		translateReferenced(follow, done, blocksDone);
     }
+    
 }
