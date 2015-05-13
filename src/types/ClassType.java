@@ -276,7 +276,7 @@ public final class ClassType extends ReferenceType {
 	 * @param name Nome del Test.
 	 * @param sig La signature.
 	 */
-	public void addTest(String name, TestSignature sig){
+	public final void addTest(String name, TestSignature sig){
 		this.tests.put(name, sig);
 	}
 	
@@ -284,7 +284,7 @@ public final class ClassType extends ReferenceType {
 	 * Si aggiunge un Fixture per questa classe.
 	 * @param sig La signature.
 	 */
-	public void addFixture(FixtureSignature sig){
+	public final void addFixture(FixtureSignature sig){
 		this.fixtures.add(sig);
 	}
 	
@@ -297,7 +297,7 @@ public final class ClassType extends ReferenceType {
 	 * @param sig the signature of the field
 	 */
 
-	public void addField(String name, FieldSignature sig) {
+	public final void addField(String name, FieldSignature sig) {
 		fields.put(name,sig);
 	}
 
