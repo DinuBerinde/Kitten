@@ -3,22 +3,20 @@ package absyn;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import semantical.TypeChecker;
 import translation.Block;
 import types.ClassMemberSignature;
 import types.ClassType;
 import types.TestSignature;
+import types.TypeList;
+import types.VoidType;
 
 public class TestDeclaration extends ClassMemberDeclaration {
 	private final String name;
 	private final Command body;
 	private TestSignature sig;
-	 /**
-     * The intermediate Kitten code for this constructor or method.
-     * This is {@code null} if this constructor or method has not been
-     * translated yet.
-     */
-
     private Block code;
+    
 	
     /**
      * Costruisce la sintassi astratta di un Test.
@@ -53,11 +51,16 @@ public class TestDeclaration extends ClassMemberDeclaration {
 		clazz.addTest(name, sig);
 	}
 
-	
+	/**
+	 * Si verifica i tipi della dichiarazione di un test.
+	 */
 	@Override
-	protected void typeCheckAux(ClassType currentClass) {
-		// TODO Auto-generated method stub
-
+	protected void typeCheckAux(ClassType clazz) {
+		TypeChecker checker = new TypeChecker(VoidType.INSTANCE, clazz.getErrorMsg(), true);
+		checker = checker.putVar("this", clazz);
+		
+		getBody().typeCheck(checker, name);
+		getBody().checkForDeadcode();
 	}
 
 
