@@ -124,10 +124,10 @@ public class IfThenElse extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
 		condition.mustBeBoolean(checker);
-		then.typeCheck(checker);
-		_else.typeCheck(checker);
+		then.typeCheck(checker, name);
+		_else.typeCheck(checker, name);
 
 		// we return the original type-checker. Hence local declarations
 		// inside the then or _else are not visible after the conditional
