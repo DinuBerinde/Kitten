@@ -71,8 +71,8 @@ public class LocalScope extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
-		body.typeCheck(checker);
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
+		body.typeCheck(checker, err);
 
 		return checker;
 	}
