@@ -78,7 +78,7 @@ public class Return extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
 		// we get from the type-checker the expected type for the return instructions
 		Type expectedReturnType = checker.getReturnType();
 
