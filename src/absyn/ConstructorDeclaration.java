@@ -91,14 +91,15 @@ public class ConstructorDeclaration extends CodeDeclaration {
 	protected void typeCheckAux(ClassType clazz) {
 		FormalParameters formals = getFormals();
 
-		TypeChecker checker = new TypeChecker(VoidType.INSTANCE, clazz.getErrorMsg());
+		TypeChecker checker = new TypeChecker(VoidType.INSTANCE, clazz.getErrorMsg(), false);
 		checker = checker.putVar("this", clazz);
+		
 		// we enrich the type-checker with the formal parameters
 		if (formals != null)
 			checker = formals.typeCheck(checker);
 
 		// we type-check the body of the constructor in the resulting type-checker
-		getBody().typeCheck(checker);
+		getBody().typeCheck(checker, clazz.getName());
 
 		// we check that there is no dead-code in the body of the constructor
 		getBody().checkForDeadcode();
@@ -108,6 +109,7 @@ public class ConstructorDeclaration extends CodeDeclaration {
 		if (clazz.getSuperclass() != null && clazz.getSuperclass().constructorLookup(TypeList.EMPTY) == null)
 			error(checker, clazz.getSuperclass() + " has no empty constructor");
 
+		
 		// constructors return nothing, so that we do not check whether
 		// a return statement is always present at the end of every
 		// syntactical execution path in the body of a constructor
