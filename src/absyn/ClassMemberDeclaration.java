@@ -14,7 +14,8 @@ import types.ClassType;
  */
 
 public abstract class ClassMemberDeclaration extends Absyn {
-
+	
+	
 	/**
 	 * The declaration of the subsequent class member. This might be {@code null}.
 	 */
@@ -138,4 +139,6 @@ public abstract class ClassMemberDeclaration extends Absyn {
 	 */
 
 	protected abstract void typeCheckAux(ClassType currentClass);
+	
+	
 }
