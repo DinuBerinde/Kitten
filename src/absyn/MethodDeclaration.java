@@ -145,7 +145,8 @@ public class MethodDeclaration extends CodeDeclaration {
 		// whose only variables in scope is this of type
 		// clazz and the parameters of the method, and
 		// where return instructions of type returnType are allowed
-		checker = new TypeChecker(rt,clazz.getErrorMsg());
+		// dentro un metodo non vogliamo l'assert
+		checker = new TypeChecker(rt,clazz.getErrorMsg(), false);
 
 		// the main method is the only <i>static</i> method, where there is no this variable
 		if (!getSignature().getName().equals("main"))
@@ -171,8 +172,10 @@ public class MethodDeclaration extends CodeDeclaration {
 							name + "\". Was " + overridden.getReturnType());
 		}
 
+		
 		// we type-check the body of the method in the resulting type-checker
-		getBody().typeCheck(checker);
+		getBody().typeCheck(checker, name);
+		
 
 		// we check that there is no dead-code in the body of the method
 		boolean stopping = getBody().checkForDeadcode();
@@ -182,5 +185,7 @@ public class MethodDeclaration extends CodeDeclaration {
 		// a return command (continue and break are forbidden in this position)
 		if (rt != VoidType.INSTANCE && !stopping)
 			error(checker, "missing return statement");
+						
 	}
+	
 }
