@@ -127,7 +127,7 @@ type ::=
    | FLOAT:f
      {: RESULT = new FloatTypeExpression(fleft); :}
    | type:t ARRAYSYMBOL:a
-     {: RESULT = new ArrayTypeExpression(aleft,t); :} ;
+     {: RESULT = new ArrayTypeExpression(aleft, t); :} ;
 
 
 // Kitten types including VOID
