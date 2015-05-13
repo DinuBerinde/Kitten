@@ -3,18 +3,15 @@ package absyn;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import semantical.TypeChecker;
 import translation.Block;
 import types.ClassMemberSignature;
 import types.ClassType;
 import types.FixtureSignature;
+import types.TypeList;
+import types.VoidType;
 
 public class FixtureDeclaration extends ClassMemberDeclaration {
-	 /**
-     * The intermediate Kitten code for this constructor or method.
-     * This is {@code null} if this constructor or method has not been
-     * translated yet.
-     */
-
     private Block code;
     private FixtureSignature sig;
 	private final Command body;
@@ -50,11 +47,16 @@ public class FixtureDeclaration extends ClassMemberDeclaration {
 	}
 
 	
-	
+	/**
+	 * Si verifica i tipi della dichiarazione di una fixture.
+	 */
 	@Override
-	protected void typeCheckAux(ClassType currentClass) {
-		// TODO Auto-generated method stub
+	protected void typeCheckAux(ClassType clazz) {
+		TypeChecker checker = new TypeChecker(VoidType.INSTANCE, clazz.getErrorMsg(), false);
+		checker = checker.putVar("this", clazz);
 
+		getBody().typeCheck(checker, "fixture");
+		getBody().checkForDeadcode();
 	}
 	
 	@Override
