@@ -12,6 +12,7 @@ import translation.Block;
  */
 
 public class While extends Command {
+	
 
 	/**
 	 * The guard or condition of the loop.
@@ -89,13 +90,13 @@ public class While extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
 		// the condition of the loop must be a Boolean expression
 		condition.mustBeBoolean(checker);
 
 		// we type-check the body of this command.
 		// Note that the resulting type-checker is not used
-		body.typeCheck(checker);
+		body.typeCheck(checker, "While");
 
 		// local declarations in the body of the loop are lost after the loop
 		return checker;
