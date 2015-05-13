@@ -31,7 +31,7 @@ public class Skip extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
 		// there is nothing to do, it is always type-checked
 
 		// the type-checker is not modified
