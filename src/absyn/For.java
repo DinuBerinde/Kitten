@@ -92,13 +92,13 @@ public class For extends Command {
      */
 
     @Override
-    protected TypeChecker typeCheckAux(TypeChecker checker) {
+    protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
     	// we consider the type-checker resulting from type-checking
     	// the initialisation component. By using this
     	// new type-checker in the following checks, we allow local variables
     	// defined in the initialisation< component to be visible
     	// in the other components of the for command
-    	TypeChecker initChecker = initialisation.typeCheck(checker);
+    	TypeChecker initChecker = initialisation.typeCheck(checker, "For");
 
     	// we check that the condition component has Boolean type
     	condition.mustBeBoolean(initChecker);
@@ -106,11 +106,11 @@ public class For extends Command {
     	// we type-check the update component. Note that the
     	// resulting type-checker is not used, so that local declarations
     	// in the update field are not visible outside that field
-    	update.typeCheck(initChecker);
+    	update.typeCheck(initChecker, "For");
 
     	// we type-check the body of this command.
     	// Note that the resulting type-checker is not used
-    	body.typeCheck(initChecker);
+    	body.typeCheck(initChecker, "For");
 
     	// we return the original type-checker, so that local declarations in
     	// the initialisation, update and body components are not visible after the loop
