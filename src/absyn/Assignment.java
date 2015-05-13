@@ -91,7 +91,7 @@ public class Assignment extends Command {
      */
 
     @Override
-    protected TypeChecker typeCheckAux(TypeChecker checker) {
+    protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
     	// we type-check the left-hand side
     	Type left = lvalue.typeCheck(checker);
 
