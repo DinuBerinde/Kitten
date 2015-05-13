@@ -155,7 +155,7 @@ public class MethodCallCommand extends Command {
 	 */
 
 	@Override
-	protected TypeChecker typeCheckAux(TypeChecker checker) {
+	protected TypeChecker typeCheckAux(TypeChecker checker, String err) {
 		Type receiverType = receiver.typeCheck(checker);
 		TypeList actualsTypes = actuals != null ? actuals.typeCheck(checker) : TypeList.EMPTY;
 
