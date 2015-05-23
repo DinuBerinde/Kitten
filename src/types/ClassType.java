@@ -54,6 +54,7 @@ public final class ClassType extends ReferenceType {
 
 	private final Map<String, FieldSignature> fields = new HashMap<>();
 
+
 	/**
 	 * The set of constructor signatures in this class.
 	 */
@@ -85,15 +86,22 @@ public final class ClassType extends ReferenceType {
 	
 	private boolean typeChecked;
 	
+	
+	
+	
+	
 	/**
 	 * La mappa nomeTest e la signature del Test.
 	 */
-	private final Map<String, TestSignature> tests = new HashMap();
+	//private final Map<String, TestSignature> tests = new HashMap<>();
 	
 	/**
 	 * Il set di Fixture signatures.
 	 */
-	private final Set<FixtureSignature> fixtures = new HashSet();
+	private final Set<FixtureSignature> fixtures = new HashSet<FixtureSignature>();
+	
+	
+	private final Map<String, TestS> tests = new HashMap<>();
 	
 	
 	
@@ -271,14 +279,20 @@ public final class ClassType extends ReferenceType {
 		return instances = result;
 	}
 
+	public final void addTest(String name, TestS sig){
+		this.tests.put(name, sig);
+	}
+	
+	
+	
 	/**
 	 * Si aggiunge un Test per questa classe.
 	 * @param name Nome del Test.
 	 * @param sig La signature.
 	 */
-	public final void addTest(String name, TestSignature sig){
+/*	public final void addTest(String name, TestSignature sig){
 		this.tests.put(name, sig);
-	}
+	}*/
 	
 	/**
 	 * Si aggiunge un Fixture per questa classe.
@@ -339,7 +353,11 @@ public final class ClassType extends ReferenceType {
 	 * Si ritorna i Test di questa classe. Test
 	 * @return I test.
 	 */
-	public Map<String, TestSignature> getTests(){
+/*	public Map<String, TestSignature> getTests(){
+		return this.tests;
+	}*/
+	
+	public Map<String, TestS> getTests(){
 		return this.tests;
 	}
 	
@@ -390,8 +408,17 @@ public final class ClassType extends ReferenceType {
 	 * @param name Nome del Test.
 	 * @return La segnature del Test.
 	 */
-	public TestSignature testLookup(String name){
+/*	public TestSignature testLookup(String name){
 		TestSignature res;
+		
+		if((res = this.tests.get(name)) != null)
+			return res;
+		
+		return null;		
+	}*/
+	
+	public TestS testLookup(String name){
+		TestS res;
 		
 		if((res = this.tests.get(name)) != null)
 			return res;

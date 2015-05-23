@@ -3,6 +3,7 @@ package bytecode;
 import java.util.Set;
 
 import types.CodeSignature;
+import types.TestSignature;
 import types.Type;
 
 /**
@@ -37,7 +38,8 @@ public abstract class CALL extends SequentialBytecode {
 	 * redefinitions of {@link #staticTarget} in {@link #receiverType} and its subclasses.
 	 */
 
-	private final Set<CodeSignature> dynamicTargets;	
+	private final Set<CodeSignature> dynamicTargets;
+	
 
 	/**
 	 * Constructs a bytecode that calls a method.
@@ -53,6 +55,7 @@ public abstract class CALL extends SequentialBytecode {
 		this.dynamicTargets = dynamicTargets;
 	}
 
+	
 	/**
 	 * Yields the type of the receiver of this call.
 	 *

@@ -28,7 +28,7 @@ public class MethodCallCommand extends Command {
 	 */
 
 	private final Expression receiver;
-
+	
 	/**
 	 * The name of the method which is called.
 	 */

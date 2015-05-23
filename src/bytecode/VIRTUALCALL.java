@@ -3,6 +3,7 @@ package bytecode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+
 import javaBytecodeGenerator.JavaClassGenerator;
 
 import org.apache.bcel.generic.InstructionList;
@@ -10,6 +11,7 @@ import org.apache.bcel.generic.InstructionList;
 import types.ClassType;
 import types.CodeSignature;
 import types.MethodSignature;
+import types.TestS;
 
 /**
  * A bytecode that calls a method of an object with dynamic lookup.
@@ -41,6 +43,7 @@ public class VIRTUALCALL extends CALL {
 		super(receiverType, staticTarget, dynamicTargets(receiverType.getInstances(), staticTarget));
 	}
 
+
 	/**
 	 * Yields the set of runtime receivers of this call. They are all
 	 * methods with the same signature of the static target and that might
@@ -62,6 +65,7 @@ public class VIRTUALCALL extends CALL {
 			// we add the dynamic target
 			if (candidate != null)
 				dynamicTargets.add(candidate);
+	
 		}
 
 		return dynamicTargets;

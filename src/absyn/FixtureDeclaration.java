@@ -16,6 +16,7 @@ public class FixtureDeclaration extends ClassMemberDeclaration {
     private FixtureSignature sig;
 	private final Command body;
 	
+	
 	/**
 	 * Costruisce la sintassi astratta della Fixture.
 	 * @param pos La posizione dove eventualmente ci sarà un errore.

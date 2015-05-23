@@ -4,14 +4,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import javaBytecodeGenerator.JavaClassGenerator;
 
+import javaBytecodeGenerator.JavaClassGenerator;
 import types.ClassMemberSignature;
 import types.CodeSignature;
 import types.ClassType;
+import types.FixtureSignature;
+import types.TestSignature;
 import bytecode.Bytecode;
 import bytecode.CALL;
 import bytecode.FieldAccessBytecode;
+import bytecode.TEST;
 
 /**
  * A program, that is, a set of class member signatures.
@@ -95,38 +98,89 @@ public class Program {
 	 */
 
 	public void dumpCodeDot() {
-		for (ClassMemberSignature sig: sigs)
+		for (ClassMemberSignature sig: sigs){
 			if (sig instanceof CodeSignature)
 				try {
-					dumpCodeDot((CodeSignature) sig, "./");
+					dumpCodeDot((CodeSignature) sig, "./", null, null);
+				}catch (IOException e) {
+					System.out.println("Could not dump Kitten code for " + sig);
 				}
-				catch (IOException e) {
-						System.out.println("Could not dump Kitten code for " + sig);
+
+			else if(sig instanceof TestSignature)
+				try{
+					this.dumpCodeDot(null, "./", (TestSignature) sig, null);
+				}catch (IOException e) {
+					System.out.println("Could not dump Kitten code for " + sig);
 				}
+			
+			else if(sig instanceof FixtureSignature)
+				try{
+					this.dumpCodeDot(null, "./", null, (FixtureSignature) sig);
+				}catch (IOException e) {
+					System.out.println("Could not dump Kitten code for " + sig);
+				}
+		}
+
 	}
 
 	/**
 	 * Writes a dot file containing a representation of the graph of blocks
 	 * for the code of the given code signature (method or constructor).
+	 * And for TestSignature and FixtureSignature
 	 *
 	 * @param sig the signature
 	 * @param dir the directory where the file must be written
 	 * @throws IOException if an input/output error occurs
 	 */
 
-	private void dumpCodeDot(CodeSignature sig, String dir) throws IOException {
-		try (FileWriter dot = new FileWriter(dir + sig + ".dot")) {
-			// the name of the graph
-			dot.write("digraph \"" + sig + "\" {\n");
+	private void dumpCodeDot(CodeSignature sig, String dir, TestSignature tsig, FixtureSignature fsig) throws IOException {
 
-			// the size of a standard A4 sheet (in inches)
-			dot.write("size = \"11,7.5\";\n");
+		if(sig != null){
+			try (FileWriter dot = new FileWriter(dir + sig + ".dot")) {
+				// the name of the graph
+				dot.write("digraph \"" + sig + "\" {\n");
 
-			toDot(sig.getCode(), dot, new HashSet<Block>());
+				// the size of a standard A4 sheet (in inches)
+				dot.write("size = \"11,7.5\";\n");
 
-			dot.write("}");
-			dot.flush();
+				toDot(sig.getCode(), dot, new HashSet<Block>());
+
+				dot.write("}");
+				dot.flush();
+			}
 		}
+
+		/*
+		if(tsig != null){
+
+			try(FileWriter dot = new FileWriter(dir + tsig + ".dot")){
+				// the name of the graph
+				dot.write("digraph \"" + tsig + "\" {\n");
+
+				// the size of a standard A4 sheet (in inches)
+				dot.write("size = \"11,7.5\";\n");
+
+				toDot(tsig.getCode(), dot, new HashSet<Block>());
+
+				dot.write("}");
+				dot.flush();
+			}
+		}
+
+		if(fsig != null){
+			try(FileWriter dot = new FileWriter(dir + fsig + ".dot")){
+				// the name of the graph
+				dot.write("digraph \"" + fsig + "\" {\n");
+
+				// the size of a standard A4 sheet (in inches)
+				dot.write("size = \"11,7.5\";\n");
+
+				toDot(fsig.getCode(), dot, new HashSet<Block>());
+
+				dot.write("}");
+				dot.flush();
+			} 
+		}*/
 	}
 
 	/**
@@ -177,9 +231,9 @@ public class Program {
 			try {
 				new JavaClassGenerator(clazz, sigs).getJavaClass().dump(clazz + ".class");
 			}
-			catch (IOException e) {
-				System.out.println("Could not dump the Java bytecode for class " + clazz);
-			}
+		catch (IOException e) {
+			System.out.println("Could not dump the Java bytecode for class " + clazz);
+		}
 	}
 
 	/**
@@ -195,5 +249,7 @@ public class Program {
 		else if (bytecode instanceof CALL)
 			// a call instruction might call many methods or constructors at runtime
 			sigs.addAll(((CALL) bytecode).getDynamicTargets());
+		else if(bytecode instanceof TEST)
+			sigs.add( ( (TEST)bytecode).getSig() );
 	}
 }

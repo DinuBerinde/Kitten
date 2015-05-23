@@ -128,6 +128,7 @@ public abstract class CodeSignature extends ClassMemberSignature {
     	return (CodeDeclaration) super.getAbstractSyntax();
     }
 
+    
     /**
      * Yields the types of the stack elements which must be on top of the
      * stack when one calls this method or constructor.

@@ -165,10 +165,10 @@ class_members ::=
      {: RESULT = new MethodDeclaration
 	(mleft, returnType, name, formals, body, next); :} 
    | TEST:t ID:name com:body class_members:next
-     {: RESULT = new TestDeclaration(tleft, name, body, next); :} 
+ 	  {: RESULT = new Test(tleft,null, body, next, name); :} 
    | FIXTURE:f com:body class_members:next
      {: RESULT = new FixtureDeclaration(fleft, body, next); :};
-
+ //    {: RESULT = new TestDeclaration(tleft, null, body, next, name); :} 
 	  
      
 // a comma-separated and possibly empty list

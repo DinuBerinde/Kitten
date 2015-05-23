@@ -168,4 +168,13 @@ public class TypeChecker {
 		return errorMsg.anyErrors();
 	}
 	
+	/**
+	 * Mi ritorna la stringa del tipo riga.colonna dell'errore della posizione pos
+	 * @param pos
+	 * @return
+	 */
+	public String getErrRowCol(int pos){
+		return errorMsg.getErrRowCol(pos);
+	}
+	
 }

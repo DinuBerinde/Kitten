@@ -105,4 +105,32 @@ public class ErrorMsg {
 
 		System.out.println(fileName + "::" + where + ": " + msg);
 	}
+	
+	/**
+	 * Mi ritorna la stringa del tipo riga.colonna dell'errore della posizione pos
+	 * @param pos
+	 * @return
+	 */
+	public String getErrRowCol(int pos){
+		anyErrors = true; // an error has been reported at least
+
+		String where;
+		if (pos >= 0) {
+			int last = 0, n = 1;
+
+			// we look for the last new line before position pos
+			for (int line: linePos) {
+				if (line >= pos) break;
+
+				last = line;
+				n++;
+			}
+
+			where = n + "." + (pos - last);
+		}
+		else
+			where = "";
+		
+		return where;
+	}
 }

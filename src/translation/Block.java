@@ -12,6 +12,7 @@ import bytecode.BytecodeList;
 import bytecode.CALL;
 import bytecode.FinalBytecode;
 import bytecode.NOP;
+import bytecode.TEST;
 
 /**
  * A block of code of the Kitten intermediate language. There is no jump
@@ -273,6 +274,10 @@ public class Block {
 					// we continue by cleaning the dynamic targets
 					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets())
 						target.getCode().cleanUp(done,program);
+				
+				// dinu
+				if(bytecode instanceof TEST)
+					((TEST) bytecode).getSig().getCode().cleanUp(done, program);
 			}
 		}
 	}

@@ -1,14 +1,23 @@
 package absyn;
 
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import bytecode.NEWSTRING;
+import bytecode.VIRTUALCALL;
 import semantical.TypeChecker;
 import translation.Block;
+import types.ClassType;
 import types.CodeSignature;
+import types.MethodSignature;
 
 public class Assert extends Command {
 	private final Expression condition;
+	private String failedAssert;
+	private String className;
+	private String where;
+	
 
 	// new AssertDeclaration(aleft, condition)
 	public Assert(int pos, Expression condition){
@@ -17,10 +26,20 @@ public class Assert extends Command {
 		this.condition = condition;
 	}
 
+	
 	@Override
 	protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
-		this.condition.mustBeBoolean(checker);
-
+		this.condition.mustBeBoolean(checker);		
+		
+		// nome della classe
+		className = this.condition.getStaticType().getObjectType().getName();
+		
+		// errore riga.col
+		where = checker.getErrRowCol(this.getPos());
+		
+		failedAssert = "test fallito @" + className + ".kit" + where;
+		
+		
 		String err = "";
 		err += "Illegal assert inside " + name;
 
@@ -31,6 +50,7 @@ public class Assert extends Command {
 		return checker;
 	}
 
+		
 	@Override
 	public boolean checkForDeadcode() {
 		// TODO Auto-generated method stub
@@ -45,10 +65,10 @@ public class Assert extends Command {
 
 	@Override
 	public Block translate(Block continuation) {
-
-		//Block res = this.condition.translateAsTest(continuation, new VIRTUALCALL(new NEWSTRING("ASSERT FAILED"), ).followedBy(continuation));
-
-		return null;
+		MethodSignature signature;
+				
+		//continuation = new VIRTUALCALL((ClassType) this.condition.getStaticType(), new runTime.String(failedAssert)).followedBy(continuation);
+		return this.condition.translateAsTest(continuation, new NEWSTRING(this.failedAssert).followedBy(continuation));
 	}
 
 }
