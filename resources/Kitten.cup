@@ -214,6 +214,8 @@ com ::=
      {: RESULT = new Skip(pleft); :}
    | exp:receiver DOT:d ID:name LPAREN expseq:actuals RPAREN
      {: RESULT = new MethodCallCommand(dleft, receiver, name, actuals); :}
+ //  | exp:receiver DOT:d ID:name 
+  //   {: RESULT = new TestCall(dleft, receiver, name); :}
    | ASSERT:a LPAREN exp:condition RPAREN 
      {: RESULT = new Assert(aleft, condition); :};
 

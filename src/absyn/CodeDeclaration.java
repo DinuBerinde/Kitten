@@ -157,12 +157,6 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 				for (CodeSignature callee: ((CALL) h).getDynamicTargets())
 					callee.getAbstractSyntax().translate(done);
 
-			else if(h instanceof TEST){
-				//done.add(((TEST) h).getSig());
-				((TEST) h).getSig().getAbstractSyntax().translate(done);
-			}
-
-
 		}
 
 		// we continue with the following blocks

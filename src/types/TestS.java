@@ -7,6 +7,7 @@ import org.apache.bcel.generic.INVOKEVIRTUAL;
 import org.apache.bcel.generic.MethodGen;
 
 import absyn.CodeDeclaration;
+import absyn.Test;
 import translation.Block;
 
 // TestSignature
@@ -14,7 +15,7 @@ public class TestS extends CodeSignature {
 	private final String name;
 	
 	public TestS(ClassType clazz, Type returnType, TypeList parameters,
-			String name, CodeDeclaration abstractSyntax) {
+			String name, Test abstractSyntax) {
 		
 		
 		super(clazz, VoidType.INSTANCE, TypeList.EMPTY, name, abstractSyntax);
@@ -24,7 +25,7 @@ public class TestS extends CodeSignature {
 	
 	@Override
 	public String toString() {
-		return getDefiningClass() + name;
+		return getDefiningClass() + name + "dinutest";
 	}
 	
 	

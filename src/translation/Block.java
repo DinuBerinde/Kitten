@@ -274,10 +274,7 @@ public class Block {
 					// we continue by cleaning the dynamic targets
 					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets())
 						target.getCode().cleanUp(done,program);
-				
-				// dinu
-				if(bytecode instanceof TEST)
-					((TEST) bytecode).getSig().getCode().cleanUp(done, program);
+			
 			}
 		}
 	}

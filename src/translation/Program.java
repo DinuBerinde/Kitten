@@ -105,7 +105,7 @@ public class Program {
 				}catch (IOException e) {
 					System.out.println("Could not dump Kitten code for " + sig);
 				}
-
+/*
 			else if(sig instanceof TestSignature)
 				try{
 					this.dumpCodeDot(null, "./", (TestSignature) sig, null);
@@ -118,7 +118,7 @@ public class Program {
 					this.dumpCodeDot(null, "./", null, (FixtureSignature) sig);
 				}catch (IOException e) {
 					System.out.println("Could not dump Kitten code for " + sig);
-				}
+				}*/
 		}
 
 	}
@@ -249,7 +249,6 @@ public class Program {
 		else if (bytecode instanceof CALL)
 			// a call instruction might call many methods or constructors at runtime
 			sigs.addAll(((CALL) bytecode).getDynamicTargets());
-		else if(bytecode instanceof TEST)
-			sigs.add( ( (TEST)bytecode).getSig() );
+		
 	}
 }

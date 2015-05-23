@@ -32,7 +32,8 @@ public class Assert extends Command {
 		this.condition.mustBeBoolean(checker);		
 		
 		// nome della classe
-		className = this.condition.getStaticType().getObjectType().getName();
+		//className = this.condition.getStaticType().getObjectType().getName();
+		className = this.getTypeChecker().getVar("this").toString();
 		
 		// errore riga.col
 		where = checker.getErrRowCol(this.getPos());
@@ -53,7 +54,7 @@ public class Assert extends Command {
 		
 	@Override
 	public boolean checkForDeadcode() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -65,9 +66,7 @@ public class Assert extends Command {
 
 	@Override
 	public Block translate(Block continuation) {
-		MethodSignature signature;
-				
-		//continuation = new VIRTUALCALL((ClassType) this.condition.getStaticType(), new runTime.String(failedAssert)).followedBy(continuation);
+		
 		return this.condition.translateAsTest(continuation, new NEWSTRING(this.failedAssert).followedBy(continuation));
 	}
 

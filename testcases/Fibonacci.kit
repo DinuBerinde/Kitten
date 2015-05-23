@@ -1,34 +1,27 @@
 class Fibonacci {
 	field int n
  	constructor() {}
-/*
-	
-	fixture{ 
-		this.n := 5;
-		assert(5=5)
-	}*/
 	
 	method int fib(int n)
     	if (n = 0 | n = 1) then return 1
     	else return this.fib(n - 1) + this.fib(n - 2)
 
-  	  
-	method int methodA(){
-	 	int res := this.fib(4);
-	 	return res
-	}
-
-	test fibonacci
-  		int res := this.fib(4)
-  		/*assert(res > 10) */
+	method void a(){}
+	
+	test fibonacci{
+  		this.n := this.fib(4);
+  		assert(this.n > 100)
+ 	}
   	
-
-
+ 
  method void main() {
     String s := new String();
 	Fibonacci temp := new Fibonacci();
-
-	temp.n := 2;
+	
+	temp.a();
+	
+	int n := temp.fib(4);
+	temp.fibonacci();
 	
     "Insert a relatively small number: ".output();
     s.input();
