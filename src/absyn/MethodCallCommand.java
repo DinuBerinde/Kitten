@@ -7,12 +7,10 @@ import semantical.TypeChecker;
 import translation.Block;
 import types.ClassType;
 import types.MethodSignature;
-import types.TestS;
 import types.Type;
 import types.TypeList;
 import types.VoidType;
 import bytecode.POP;
-import bytecode.TEST;
 import bytecode.VIRTUALCALL;
 
 /**
@@ -52,7 +50,7 @@ public class MethodCallCommand extends Command {
 
 	private MethodSignature method;
 
-	private TestS test;
+
 
 	/**
 	 * Constructs the abstract syntax of a method call command.
@@ -163,7 +161,6 @@ public class MethodCallCommand extends Command {
 		Type receiverType = receiver.typeCheck(checker);
 		TypeList actualsTypes = actuals != null ? actuals.typeCheck(checker) : TypeList.EMPTY;
 
-
 		// the receiver must have class type. Hence we cannot call method of an array.
 		// This is fine since arrays are subclasses of Object which has no methods
 		if (!(receiverType instanceof ClassType))
@@ -174,15 +171,10 @@ public class MethodCallCommand extends Command {
 			// that is more specific than them
 			Set<MethodSignature> methods = ((ClassType) receiverType).methodsLookup(name,actualsTypes);
 
-			if (methods.isEmpty()){
-				TestS test = ((ClassType) receiverType).testLookup(name);
-
-				if( test != null)
-					this.test = test;
-				else
-					// there is no matching method!
-					error("no matching method for call to \"" + name + "\"");
-			}else if (methods.size() >= 2)
+			if (methods.isEmpty())
+				// there is no matching method!
+				error("no matching method for call to \"" + name + "\"");
+			else if (methods.size() >= 2)
 				// more than two matching methods, and none of them is
 				// more specific of the other? Ambiguous call
 				error("call to method \"" + name + "\" is ambiguous");
@@ -194,6 +186,8 @@ public class MethodCallCommand extends Command {
 		// the type-checker has not been modified
 		return checker;
 	}
+
+
 
 	/**
 	 * Checks that this method call command does not contain <i>dead-code</i>, that is,
@@ -230,11 +224,9 @@ public class MethodCallCommand extends Command {
 			// if the method does return a value, we must throw it away
 			continuation = new POP(method.getReturnType()).followedBy(continuation);
 
-		if( this.method != null)
-			// we put an instruction which calls the method
-			continuation = new VIRTUALCALL((ClassType) receiver.getStaticType(), method).followedBy(continuation);
-		else
-			continuation = new TEST((ClassType) receiver.getStaticType(), this.test).followedBy(continuation);
+		// we put an instruction which calls the method
+		continuation = new VIRTUALCALL((ClassType) receiver.getStaticType(), method)
+			.followedBy(continuation);
 
 		// we translate the actual parameters
 		if (actuals != null)

@@ -3,10 +3,8 @@ package javaBytecodeGenerator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 
-import org.apache.bcel.Constants;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.GOTO;
@@ -17,11 +15,6 @@ import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.TargetLostException;
 
 import translation.Block;
-import types.ClassMemberSignature;
-import types.ClassType;
-import types.ConstructorSignature;
-import types.FieldSignature;
-import types.MethodSignature;
 import bytecode.BranchingBytecode;
 
 /**
@@ -33,8 +26,7 @@ import bytecode.BranchingBytecode;
  */
 
 @SuppressWarnings("serial")
-public class JavaClassGenerator extends ClassGen {
-
+public abstract class JavaClassGenerator extends ClassGen {
 	/**
 	 * This is a utility class of the BCEL library that helps us generate complex Java bytecodes,
 	 * or bytecodes that have different forms depending on the type of their operands,
@@ -50,43 +42,17 @@ public class JavaClassGenerator extends ClassGen {
 
 	private final static String[] noInterfaces = new String[] {};
 
-	/**
-	 * Builds a class generator for the given class type.
-	 *
-	 * @param clazz the class type
-	 * @param sigs a set of class member signatures. These are those that must be translated
-	 */
+	public JavaClassGenerator(String class_name, String super_class_name,
+			String file_name, int access_flags, String[] interfaces, ConstantPoolGen cp) {
 
-	public JavaClassGenerator(ClassType clazz, Set<ClassMemberSignature> sigs) {
-		super(clazz.getName(), // name of the class
-			// the superclass of the Kitten Object class is set to be the Java java.lang.Object class
-			clazz.getSuperclass() != null ? clazz.getSuperclass().getName() : "java.lang.Object",
-			clazz.getName() + ".kit", // source file
-			Constants.ACC_PUBLIC, // Java attributes: public!
-			noInterfaces, // no interfaces
-			new ConstantPoolGen()); // empty constant pool, at the beginning
-
+		super(class_name, super_class_name, file_name, access_flags, noInterfaces, cp);
+		
 		// create a new instruction factory that places the constants
 		// in the previous constant pool. This is useful for generating
 		// complex bytecodes that access the constant pool
 		this.factory = new InstructionFactory(getConstantPool());
-
-		// we add the fields
-		for (FieldSignature field: clazz.getFields().values())
-			if (sigs.contains(field))
-				field.createField(this);
-
-		// we add the constructors
-		for (ConstructorSignature constructor: clazz.getConstructors())
-			if (sigs.contains(constructor))
-				constructor.createConstructor(this);
-
-		// we add the methods
-		for (Set<MethodSignature> s: clazz.getMethods().values())
-			for (MethodSignature method: s)
-				if (sigs.contains(method))
-					method.createMethod(this);
 	}
+
 
 	/**
 	 * Yields the instruction factory that can be used to create complex
@@ -164,7 +130,7 @@ public class JavaClassGenerator extends ClassGen {
 	 *                     in order to include the Java bytecode generated for the followers
 	 *                     of {@code block}, including some <i>glue</i>
 	 */
- 
+
 	private void generateJavaBytecodeFollows(Block block, Map<Block, InstructionHandle> done, InstructionList instructions) {
 		List<Block> follows = block.getFollows();
 
@@ -223,9 +189,9 @@ public class JavaClassGenerator extends ClassGen {
 					il.redirectBranches(handle, handle.getNext());
 					il.delete(handle);
 				}
-				catch (TargetLostException e) {
-					// impossible
-				}
+			catch (TargetLostException e) {
+				// impossible
+			}
 		}
 
 		return il;

@@ -1,32 +1,55 @@
 package absyn;
 
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import bytecode.NEWSTRING;
 import bytecode.VIRTUALCALL;
 import semantical.TypeChecker;
 import translation.Block;
 import types.ClassType;
-import types.CodeSignature;
 import types.MethodSignature;
+import types.TypeList;
+
+/**
+ * A node of abstract syntax representing an assert command.
+ *
+ * @author Dinu
+ */
 
 public class Assert extends Command {
+	/**
+	 * The guard or condition of the loop.
+	 */
 	private final Expression condition;
 	private String failedAssert;
 	private String className;
 	private String where;
 	
 
-	// new AssertDeclaration(aleft, condition)
+
+
+	/**
+	 * Constructs the abstract syntax of an assert command.
+	 *
+	 * @param pos the position in the source file where it starts
+	 *            the concrete syntax represented by this abstract syntax
+	 * @param condition the guard or condition of the loop
+	 */
 	public Assert(int pos, Expression condition){
 		super(pos);
 
 		this.condition = condition;
 	}
 
-	
+	/**
+	 * Performs the type-checking of the assert command
+	 * by using a given type-checker. It type-checks the condition and body
+	 * of the assert command. It checks that the condition is
+	 * a Boolean expression. Returns the original type-checker
+	 * passed as a parameter.
+	 *
+	 * @param checker the type-checker to be used for type-checking
+	 * @return {@code checker} itself
+	 */
 	@Override
 	protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
 		this.condition.mustBeBoolean(checker);		
@@ -58,16 +81,32 @@ public class Assert extends Command {
 		return false;
 	}
 
+
 	@Override
 	protected void toDotAux(FileWriter where) throws java.io.IOException {
 		linkToNode("condition", condition.toDot(where), where);
 
 	}
+	
+	/**
+	 * Translates this command into intermediate Kitten bytecode. Namely,
+	 * it returns a code which evaluates the {@link #condition} 
+	 * 
+	 * @param continuation the continuation to be executed after this command
+	 * @return the code executing this command and then the {@code continuation}
+	 */
 
 	@Override
-	public Block translate(Block continuation) {
+	public Block translate(Block continuation) {		
+		ClassType classType = ClassType.mk("String");
 		
-		return this.condition.translateAsTest(continuation, new NEWSTRING(this.failedAssert).followedBy(continuation));
+		MethodSignature method = classType.methodLookup("output", TypeList.EMPTY);
+	
+		Block temp = new VIRTUALCALL(classType, method).followedBy(continuation);
+		
+		Block result = this.condition.translateAsTest(continuation, new NEWSTRING(this.failedAssert).followedBy(temp));
+				
+		return result;
 	}
 
 }

@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javaBytecodeGenerator.JavaClassGenerator;
+import javaBytecodeGenerator.NormalJavaClassGenerator;
+import javaBytecodeGenerator.TestClassGenerator;
 import types.ClassMemberSignature;
 import types.CodeSignature;
 import types.ClassType;
-import types.FixtureSignature;
-import types.TestSignature;
 import bytecode.Bytecode;
 import bytecode.CALL;
 import bytecode.FieldAccessBytecode;
-import bytecode.TEST;
+
 
 /**
  * A program, that is, a set of class member signatures.
@@ -88,7 +88,8 @@ public class Program {
 	 */
 
 	public void cleanUp() {
-		sigs.clear();
+		
+		sigs.clear();		
 		start.getCode().cleanUp(this);
 	}
 
@@ -101,24 +102,10 @@ public class Program {
 		for (ClassMemberSignature sig: sigs){
 			if (sig instanceof CodeSignature)
 				try {
-					dumpCodeDot((CodeSignature) sig, "./", null, null);
+					dumpCodeDot((CodeSignature) sig, "./");
 				}catch (IOException e) {
 					System.out.println("Could not dump Kitten code for " + sig);
 				}
-/*
-			else if(sig instanceof TestSignature)
-				try{
-					this.dumpCodeDot(null, "./", (TestSignature) sig, null);
-				}catch (IOException e) {
-					System.out.println("Could not dump Kitten code for " + sig);
-				}
-			
-			else if(sig instanceof FixtureSignature)
-				try{
-					this.dumpCodeDot(null, "./", null, (FixtureSignature) sig);
-				}catch (IOException e) {
-					System.out.println("Could not dump Kitten code for " + sig);
-				}*/
 		}
 
 	}
@@ -133,7 +120,7 @@ public class Program {
 	 * @throws IOException if an input/output error occurs
 	 */
 
-	private void dumpCodeDot(CodeSignature sig, String dir, TestSignature tsig, FixtureSignature fsig) throws IOException {
+	private void dumpCodeDot(CodeSignature sig, String dir) throws IOException {
 
 		if(sig != null){
 			try (FileWriter dot = new FileWriter(dir + sig + ".dot")) {
@@ -149,38 +136,6 @@ public class Program {
 				dot.flush();
 			}
 		}
-
-		/*
-		if(tsig != null){
-
-			try(FileWriter dot = new FileWriter(dir + tsig + ".dot")){
-				// the name of the graph
-				dot.write("digraph \"" + tsig + "\" {\n");
-
-				// the size of a standard A4 sheet (in inches)
-				dot.write("size = \"11,7.5\";\n");
-
-				toDot(tsig.getCode(), dot, new HashSet<Block>());
-
-				dot.write("}");
-				dot.flush();
-			}
-		}
-
-		if(fsig != null){
-			try(FileWriter dot = new FileWriter(dir + fsig + ".dot")){
-				// the name of the graph
-				dot.write("digraph \"" + fsig + "\" {\n");
-
-				// the size of a standard A4 sheet (in inches)
-				dot.write("size = \"11,7.5\";\n");
-
-				toDot(fsig.getCode(), dot, new HashSet<Block>());
-
-				dot.write("}");
-				dot.flush();
-			} 
-		}*/
 	}
 
 	/**
@@ -229,13 +184,31 @@ public class Program {
 		// we consider one class at the time and we generate its Java bytecode
 		for (ClassType clazz: ClassType.getAll())
 			try {
-				new JavaClassGenerator(clazz, sigs).getJavaClass().dump(clazz + ".class");
+				JavaClassGenerator jcg = new NormalJavaClassGenerator(clazz, sigs);
+				jcg.getJavaClass().dump(clazz + ".class");
 			}
 		catch (IOException e) {
 			System.out.println("Could not dump the Java bytecode for class " + clazz);
 		}
 	}
 
+	/**
+	 * Generates the Java bytecode for all the class types and
+	 * dumps the relative {@code .class} files on the file system.
+	 */
+	public void generataJavaBytecodeForTests(){
+		for (ClassType clazz: ClassType.getAll())
+			try {
+				JavaClassGenerator jcg = new TestClassGenerator(clazz, sigs);
+				jcg.getJavaClass().dump(clazz + "Test.class");
+			}
+		catch (IOException e) {
+			System.out.println("Could not dump the Java bytecode for class " + clazz);
+		}
+		
+	}
+	
+	
 	/**
 	 * Takes note that this program contains the given bytecode. This amounts
 	 * to adding some signature to the set of signatures for the program.
@@ -249,6 +222,6 @@ public class Program {
 		else if (bytecode instanceof CALL)
 			// a call instruction might call many methods or constructors at runtime
 			sigs.addAll(((CALL) bytecode).getDynamicTargets());
-		
+
 	}
 }

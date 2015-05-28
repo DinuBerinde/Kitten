@@ -11,8 +11,6 @@ import org.apache.bcel.generic.InstructionList;
 import types.ClassType;
 import types.CodeSignature;
 import types.MethodSignature;
-import types.TestS;
-import types.Type;
 
 /**
  * A bytecode that calls a method of an object with dynamic lookup.

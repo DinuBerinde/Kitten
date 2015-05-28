@@ -1,6 +1,7 @@
 package bytecode;
 
 import javaBytecodeGenerator.JavaClassGenerator;
+import javaBytecodeGenerator.NormalJavaClassGenerator;
 
 import org.apache.bcel.generic.F2I;
 import org.apache.bcel.generic.I2F;

@@ -1,58 +1,78 @@
 package types;
 
-import translation.Block;
-import absyn.ClassMemberDeclaration;
-import absyn.CodeDeclaration;
-import absyn.TestDeclaration;
+import org.apache.bcel.Constants;
+import org.apache.bcel.generic.FieldGen;
+import org.apache.bcel.generic.INVOKEVIRTUAL;
+import org.apache.bcel.generic.MethodGen;
 
-public class TestSignature extends ClassMemberSignature {
-	
-	// nome del test
+import javaBytecodeGenerator.JavaClassGenerator;
+import javaBytecodeGenerator.TestClassGenerator;
+import absyn.TestDeclaration;
+import translation.Block;
+
+/**
+ * The signature of a test of a Kitten class.
+ *
+ * @author Dinu
+ */
+public class TestSignature extends CodeSignature {
 	private final String name;
-	
-	// il codice intermedio Kitten del test
-	private Block code;
-	
+
 	/**
-	 * Costruisce la segnature del Test con il nome name.
-	 * 
-	 * @param name Nome del test.
-	 * @param clazz La classe dov'è definito il test.
-	 * @param abstractSyntax La sintassi astratta del test.
+	 * Constructs the signature of a test with the given name, return type
+	 * and parameters types.
+	 *
+	 * @param clazz the class where this test is defined
+	 * @param name the name of the test
+	 * @param abstractSyntax the abstract syntax of the declaration of this test
 	 */
-	public TestSignature(String name, ClassType clazz, ClassMemberDeclaration abstractSyntax){
-		super(clazz, abstractSyntax);
-		
+	public TestSignature(ClassType clazz, String name, TestDeclaration abstractSyntax) {
+
+		super(clazz, VoidType.INSTANCE, TypeList.EMPTY, name, abstractSyntax);
 		this.name = name;
 	}
 
-	public String toString(){
-		return this.getDefiningClass() + ":" + name;
+
+	@Override
+	public String toString() {
+		return getDefiningClass() + ".Test:" + name;
+	}
+
+
+	@Override
+	protected Block addPrefixToCode(Block code) {
+
+		return code;
+	}
+
+
+	public void createTest(TestClassGenerator classGen) {
+
+		TypeList type = new TypeList( this.getDefiningClass().getObjectType(), null);
+
+		MethodGen methodGen = new MethodGen
+				(Constants.ACC_PRIVATE | Constants.ACC_STATIC, // private and static
+						org.apache.bcel.generic.Type.VOID, // return type
+						type.toBCEL(), // parameters types 
+						null, // parameters names: we do not care
+						name, // name of the test
+						classGen.getClassName(), // name of the class
+						classGen.generateJavaBytecode(this.getCode()), // bytecode of the test
+						classGen.getConstantPool()); // constant pool
+
+		// we must always call these methods before the getMethod()
+		// method below. They set the number of local variables and stack
+		// elements used by the code of the method
+		methodGen.setMaxStack();
+		methodGen.setMaxLocals();
+
+		classGen.addMethod(methodGen.getMethod());
 	}
 	
-	 /**
-     * Sets the Kitten code of this test 
-     *
-     * @param code the Kitten code
-     */
-    public void setCode(Block code) {
-    	this.code = code;
-    }
-    
+	public INVOKEVIRTUAL createINVOKEVIRTUAL(JavaClassGenerator classGen) {
+		return (INVOKEVIRTUAL) createInvokeInstruction(classGen, Constants.INVOKEVIRTUAL);
+	}
 
-    /**
-     * Yields the block where the Kitten bytecode of this test starts.
-     *
-     * @return the block where the Kitten bytecode of this test starts
-     */
-    public Block getCode() {
-    	return code;
-    }
-    
-    @Override
-    public TestDeclaration getAbstractSyntax() {
-    	return (TestDeclaration) super.getAbstractSyntax();
-    }
-    
-    
+
+
 }

@@ -3,16 +3,21 @@ package translation;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import types.ClassMemberSignature;
+import types.ClassType;
 import types.CodeSignature;
+import types.FixtureSignature;
+import types.TestSignature;
 import bytecode.BranchingBytecode;
 import bytecode.Bytecode;
 import bytecode.BytecodeList;
 import bytecode.CALL;
 import bytecode.FinalBytecode;
 import bytecode.NOP;
-import bytecode.TEST;
+
 
 /**
  * A block of code of the Kitten intermediate language. There is no jump
@@ -232,6 +237,18 @@ public class Block {
 		cleanUp(new HashSet<Block>(), program);
 	}
 
+	private Set<Block> addTestFixture(Set<Block> done, ClassType clazz) {
+		
+		Map<String, TestSignature> map = clazz.getTests();
+		for(Map.Entry<String, TestSignature> entry: map.entrySet())
+			done.add(entry.getValue().getCode());
+		
+		Set<FixtureSignature> set = clazz.getFixtures();
+		for(FixtureSignature fixture: set)
+			done.add(fixture.getCode());
+		return done;
+	}
+	
 	/**
 	 * Auxiliary method that cleans-up this block and all those reachable
 	 * from it. It removes useless {@code nop}'s and merges a block, with only
@@ -242,9 +259,11 @@ public class Block {
 	 */
 
 	private void cleanUp(Set<Block> done, Program program) {
+		Set<Block> temp = new HashSet<Block>();
+		
 		if (!done.contains(this)) {
 			done.add(this);
-
+			
 			List<Block> newFollows = new ArrayList<>();
 
 			// we consider each successor and remove isolated nop's
@@ -269,11 +288,19 @@ public class Block {
 
 				// we take note that the program contains the bytecodes in the block
 				program.storeBytecode(bytecode);
-
+				
 				if (bytecode instanceof CALL)
 					// we continue by cleaning the dynamic targets
-					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets())
+					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets()){
 						target.getCode().cleanUp(done,program);
+						ClassType clazz = target.getDefiningClass();
+						temp = addTestFixture(done,clazz);
+						
+						for(Block b: temp)
+							done.add(b);
+
+					}
+						
 			
 			}
 		}

@@ -165,10 +165,10 @@ class_members ::=
      {: RESULT = new MethodDeclaration
 	(mleft, returnType, name, formals, body, next); :} 
    | TEST:t ID:name com:body class_members:next
- 	  {: RESULT = new Test(tleft,null, body, next, name); :} 
+ 	  {: RESULT = new TestDeclaration(tleft, body, next, name); :} 
    | FIXTURE:f com:body class_members:next
      {: RESULT = new FixtureDeclaration(fleft, body, next); :};
- //    {: RESULT = new TestDeclaration(tleft, null, body, next, name); :} 
+ 
 	  
      
 // a comma-separated and possibly empty list
@@ -214,8 +214,6 @@ com ::=
      {: RESULT = new Skip(pleft); :}
    | exp:receiver DOT:d ID:name LPAREN expseq:actuals RPAREN
      {: RESULT = new MethodCallCommand(dleft, receiver, name, actuals); :}
- //  | exp:receiver DOT:d ID:name 
-  //   {: RESULT = new TestCall(dleft, receiver, name); :}
    | ASSERT:a LPAREN exp:condition RPAREN 
      {: RESULT = new Assert(aleft, condition); :};
 

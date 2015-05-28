@@ -35,7 +35,7 @@ public class TypeList {
 	 * @param tail the tail of the list
 	 */
 
-	private TypeList(Type head, TypeList tail) {
+	public TypeList(Type head, TypeList tail) {
 		this.head = head;
 		this.tail = tail;
 	}
