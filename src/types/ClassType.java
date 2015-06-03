@@ -276,9 +276,10 @@ public final class ClassType extends ReferenceType {
 	
 	
 	/**
-	 * Si aggiunge un Test per questa classe.
-	 * @param name Nome del Test.
-	 * @param sig La signature.
+	 * Adds a test to this class.
+	 * 
+	 * @param name name of the test
+	 * @param sig the signature of the test
 	 */
 	public final void addTest(String name, TestSignature sig){
 		this.tests.put(name, sig);
@@ -286,8 +287,9 @@ public final class ClassType extends ReferenceType {
 	
 
 	/**
-	 * Si aggiunge un Fixture per questa classe.
-	 * @param sig La signature.
+	 * Adds a fixture to this class
+	 * 
+	 * @param sig the signature of the fixture
 	 */
 	public final void addFixture(FixtureSignature sig){
 		this.fixtures.add(sig);
@@ -339,16 +341,18 @@ public final class ClassType extends ReferenceType {
 	
 	
 	/**
-	 * Si ritorna i Test di questa classe. Test
-	 * @return I test.
+	 * Yields the tests of this class
+	 * 
+	 * @return this tests
 	 */	
 	public Map<String, TestSignature> getTests(){
 		return this.tests;
 	}
 	
 	/**
-	 * Si ritorna i Fixture di questa classe.
-	 * @return I fixture.
+	 * Yields the fixtures of this class
+	 * 
+	 * @return the fixturs
 	 */
 	public Set<FixtureSignature> getFixtures(){
 		return this.fixtures;
@@ -384,16 +388,14 @@ public final class ClassType extends ReferenceType {
 		return methods;
 	}
 
-	/*
-	public Set<TestSignature> getTests(){
-		return new Set<>
-	}
 	
-	*/
+	
 	/**
-	 * Si cerca in questa classe la segnature del Test con nome name.
-	 * @param name Nome del Test.
-	 * @return La segnature del Test.
+	 * Looks up from this class for the signature of the test
+	 * with the given name, if any.
+	 * 
+	 * @param name name of the test
+	 * @return the signature of the test 
 	 */	
 	public TestSignature testLookup(String name){
 		TestSignature res;
@@ -405,8 +407,9 @@ public final class ClassType extends ReferenceType {
 	}
 	
 	/**
-	 * Si ritorna un set di signatures di Fixture.
-	 * @return
+	 * Yields the fixtures of this class
+	 * 
+	 * @return the fixtures
 	 */
 	public Set<FixtureSignature> fixtureLookup(){			
 		return this.fixtures;

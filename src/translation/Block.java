@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import types.ClassMemberSignature;
 import types.ClassType;
 import types.CodeSignature;
 import types.FixtureSignature;
@@ -237,17 +236,6 @@ public class Block {
 		cleanUp(new HashSet<Block>(), program);
 	}
 
-	private Set<Block> addTestFixture(Set<Block> done, ClassType clazz) {
-		
-		Map<String, TestSignature> map = clazz.getTests();
-		for(Map.Entry<String, TestSignature> entry: map.entrySet())
-			done.add(entry.getValue().getCode());
-		
-		Set<FixtureSignature> set = clazz.getFixtures();
-		for(FixtureSignature fixture: set)
-			done.add(fixture.getCode());
-		return done;
-	}
 	
 	/**
 	 * Auxiliary method that cleans-up this block and all those reachable
@@ -259,10 +247,17 @@ public class Block {
 	 */
 
 	private void cleanUp(Set<Block> done, Program program) {
-		Set<Block> temp = new HashSet<Block>();
-		
+		ClassType clazz = program.getStart().getDefiningClass();
+
 		if (!done.contains(this)) {
 			done.add(this);
+			
+					
+			for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet())
+				done.add(test.getValue().getCode());
+			
+			for(FixtureSignature fixture: clazz.getFixtures())
+				done.add(fixture.getCode());
 			
 			List<Block> newFollows = new ArrayList<>();
 
@@ -273,7 +268,7 @@ public class Block {
 					newFollows.addAll(follow.follows);
 				else
 					newFollows.add(follow);
-
+			
 			follows = newFollows;
 
 			// we continue with the successors
@@ -288,21 +283,22 @@ public class Block {
 
 				// we take note that the program contains the bytecodes in the block
 				program.storeBytecode(bytecode);
-				
+
 				if (bytecode instanceof CALL)
 					// we continue by cleaning the dynamic targets
-					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets()){
+					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets()){	
+						
+						
+						for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet())
+							done.add(test.getValue().getCode());
+						
+						for(FixtureSignature fixture: clazz.getFixtures())
+							done.add(fixture.getCode());
+						
 						target.getCode().cleanUp(done,program);
-						ClassType clazz = target.getDefiningClass();
-						temp = addTestFixture(done,clazz);
-						
-						for(Block b: temp)
-							done.add(b);
-
 					}
-						
-			
 			}
+
 		}
 	}
 }

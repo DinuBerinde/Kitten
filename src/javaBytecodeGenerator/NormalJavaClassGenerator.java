@@ -4,8 +4,6 @@ import java.util.Set;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.generic.ConstantPoolGen;
-import org.apache.bcel.generic.InstructionFactory;
-
 import types.ClassMemberSignature;
 import types.ClassType;
 import types.ConstructorSignature;

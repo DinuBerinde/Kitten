@@ -1,11 +1,8 @@
 package types;
 
 import org.apache.bcel.Constants;
-import org.apache.bcel.generic.FieldGen;
-import org.apache.bcel.generic.INVOKEVIRTUAL;
 import org.apache.bcel.generic.MethodGen;
 
-import javaBytecodeGenerator.JavaClassGenerator;
 import javaBytecodeGenerator.TestClassGenerator;
 import absyn.TestDeclaration;
 import translation.Block;
@@ -45,10 +42,14 @@ public class TestSignature extends CodeSignature {
 		return code;
 	}
 
-
+	/**
+	 * Adds to the given class generator a Java bytecode method for this test.
+	 *
+	 * @param classGen the generator of the class where the test lives
+	 */
 	public void createTest(TestClassGenerator classGen) {
-
-		TypeList type = new TypeList( this.getDefiningClass().getObjectType(), null);
+		// we build the type of the test
+		TypeList type = new TypeList(this.getDefiningClass(), TypeList.EMPTY);
 
 		MethodGen methodGen = new MethodGen
 				(Constants.ACC_PRIVATE | Constants.ACC_STATIC, // private and static
@@ -57,7 +58,7 @@ public class TestSignature extends CodeSignature {
 						null, // parameters names: we do not care
 						name, // name of the test
 						classGen.getClassName(), // name of the class
-						classGen.generateJavaBytecode(this.getCode()), // bytecode of the test
+						classGen.generateJavaBytecode(new Block()), // bytecode of the test
 						classGen.getConstantPool()); // constant pool
 
 		// we must always call these methods before the getMethod()
@@ -68,11 +69,5 @@ public class TestSignature extends CodeSignature {
 
 		classGen.addMethod(methodGen.getMethod());
 	}
-	
-	public INVOKEVIRTUAL createINVOKEVIRTUAL(JavaClassGenerator classGen) {
-		return (INVOKEVIRTUAL) createInvokeInstruction(classGen, Constants.INVOKEVIRTUAL);
-	}
-
-
 
 }

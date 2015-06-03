@@ -1,6 +1,7 @@
 package absyn;
 
 import java.io.FileWriter;
+
 import bytecode.NEWSTRING;
 import bytecode.VIRTUALCALL;
 import semantical.TypeChecker;
@@ -19,13 +20,11 @@ public class Assert extends Command {
 	/**
 	 * The guard or condition of the loop.
 	 */
-	private final Expression condition;
+	private Expression condition;
 	private String failedAssert;
 	private String className;
 	private String where;
 	
-
-
 
 	/**
 	 * Constructs the abstract syntax of an assert command.
@@ -52,17 +51,15 @@ public class Assert extends Command {
 	 */
 	@Override
 	protected TypeChecker typeCheckAux(TypeChecker checker, String name) {
+		// the condition must be a Boolean expression
 		this.condition.mustBeBoolean(checker);		
-		
-		// nome della classe
-		//className = this.condition.getStaticType().getObjectType().getName();
+
 		className = this.getTypeChecker().getVar("this").toString();
 		
-		// errore riga.col
+		// error riga.col
 		where = checker.getErrRowCol(this.getPos());
 		
 		failedAssert = "test fallito @" + className + ".kit" + where;
-		
 		
 		String err = "";
 		err += "Illegal assert inside " + name;
@@ -74,7 +71,16 @@ public class Assert extends Command {
 		return checker;
 	}
 
-		
+	/**
+	 * Yields the abstract syntax of the guard or condition of the assert command.
+	 *
+	 * @return the abstract syntax of the guard or condition of the assert command
+	 */
+
+	public Expression getCondition() {
+		return condition;
+	}
+	
 	@Override
 	public boolean checkForDeadcode() {
 		
@@ -85,7 +91,6 @@ public class Assert extends Command {
 	@Override
 	protected void toDotAux(FileWriter where) throws java.io.IOException {
 		linkToNode("condition", condition.toDot(where), where);
-
 	}
 	
 	/**
@@ -101,12 +106,13 @@ public class Assert extends Command {
 		ClassType classType = ClassType.mk("String");
 		
 		MethodSignature method = classType.methodLookup("output", TypeList.EMPTY);
-	
-		Block temp = new VIRTUALCALL(classType, method).followedBy(continuation);
 		
-		Block result = this.condition.translateAsTest(continuation, new NEWSTRING(this.failedAssert).followedBy(temp));
+		Block temp = new NEWSTRING("assert test").followedBy(new VIRTUALCALL(classType, method).followedBy(continuation));
+		
+		Block result = this.condition.translateAsTest(continuation, temp);
 				
 		return result;
+		
 	}
 
 }

@@ -3,7 +3,7 @@ class Fibonacci {
  	constructor() {}
 	
 	fixture
-	 this.n := 10
+	 this.n := 10 
 	 
 	method int fib(int n)
     	if (n = 0 | n = 1) then return 1
@@ -13,25 +13,23 @@ class Fibonacci {
 		this.n := 10;
 		return this.n
 	}
-	
-	test fibonacci
-  		this.n := this.fib(4)
-  		/*assert(this.n > 100)*/
+
+	test fibonacci{
+  		this.n := this.fib(4);
+  		/*assert(true);*/
+  		this.n := 6
+   }
  	
   	
  
  method void main() {
-    String s := new String();
 	Fibonacci temp := new Fibonacci();
-
-	int num := temp.arr(); 
-
 	
-    "Insert a relatively small number: ".output();
-    s.input();
-    "Fibonacci(".concat(s).concat(") = ".concat
-	(new Fibonacci().fib(s.toInt()))).output();
-    "\n".output()
+	temp.n := 10;
+    int res := temp.fib(1);
+
+    "Fibonacci  Fib(x) = ".concat(res).output()
+
   }
  
   

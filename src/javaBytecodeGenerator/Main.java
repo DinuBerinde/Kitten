@@ -37,10 +37,30 @@ public class Main {
 			// we translate, into Java bytecode, the Kitten code of every class member which
 		    // is reachable from the class we translated. This also generates the class files
 		    program.generateJavaBytecode();
-
+		    program.generateJavaBytecodeForTests();
 		    System.out.println("Java bytecode generation completed       \t[" + (System.currentTimeMillis() - time) + "ms]");
 		}
 
 		System.out.println("Total compilation time was " + (System.currentTimeMillis() - totalTime) + "ms");
+
+		
+		// we print the results of the tests 
+		System.out.println("Test execution for class " + clazz.getName() + ":");
+		
+	/*	Map<String, TestSignature> tests = clazz.getTests();
+		
+		for(Map.Entry<String, TestSignature> test: tests.entrySet())
+			
+			System.out.println("\t" + "- " + test.getKey() + ":");*/
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 }

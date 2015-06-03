@@ -118,9 +118,18 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 	 */
 
 	public void translate(Set<ClassMemberSignature> done) {
+		
 		if (done.add(sig)) {
-			this.addTestFixture(done, sig.getDefiningClass());
+		
+			done.addAll(sig.getDefiningClass().getTests().values());
+			done.addAll(sig.getDefiningClass().getFixtures());	
+			/*for(Map.Entry<String, TestSignature> test: sig.getDefiningClass().getTests().entrySet())
+				done.add(test.getValue());
+		
 			
+			for(FixtureSignature fixture: sig.getDefiningClass().getFixtures())
+				done.add(fixture);*/
+					
 			// we translate the body of the constructor or
 			// method with a block containing RETURN as continuation. This way,
 			// all methods returning void and
@@ -147,70 +156,78 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 	 */
 
 	private void translateReferenced(Block block, Set<ClassMemberSignature> done, Set<Block> blocksDone) {
-		ClassType cls = this.sig.getDefiningClass();
 		
 		// if we already processed the block, we return immediately
 		if (!blocksDone.add(block))
 			return;
-
+		
 		for (BytecodeList cursor = block.getBytecode(); cursor != null; cursor = cursor.getTail()) {
 			Bytecode h = cursor.getHead();
-			Set<ClassMemberSignature> temp = new HashSet<ClassMemberSignature>();
+			
 
 			if (h instanceof GETFIELD){
 				FieldSignature field = ((GETFIELD) h).getField();
 				ClassType clazz = field.getDefiningClass();
-				temp = addTestFixture(done,clazz);
 				
-				for(ClassMemberSignature sig: temp)
-					done.add(sig);
-				
+				done.addAll(clazz.getTests().values());
+				done.addAll(clazz.getFixtures());
 				done.add(((GETFIELD) h).getField());
 				
+				
+			/*	
+				for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
+					done.add(test.getValue());
+					test.getValue().getAbstractSyntax().translate(done);
+				}
+				
+				for(FixtureSignature fixture: clazz.getFixtures()){
+					done.add(fixture);
+					fixture.getAbstractSyntax().translate(done);
+				}*/
+					
 			}else if (h instanceof PUTFIELD){
 				FieldSignature field = ((PUTFIELD) h).getField();
 				ClassType clazz = field.getDefiningClass();
-				temp = addTestFixture(done,clazz);
 				
-				for(ClassMemberSignature sig: temp)
-					done.add(sig);
-				
+				done.addAll(clazz.getTests().values());
+				done.addAll(clazz.getFixtures());
 				done.add(((PUTFIELD) h).getField());
+			/*	
+				for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
+					done.add(test.getValue());
+					test.getValue().getAbstractSyntax().translate(done);
+				}
 				
+				for(FixtureSignature fixture: clazz.getFixtures()){
+					done.add(fixture);
+					fixture.getAbstractSyntax().translate(done);
+				} */
+								
 			}else if (h instanceof CALL)
 				for (CodeSignature callee: ((CALL) h).getDynamicTargets()){		
 					ClassType clazz = callee.getDefiningClass();
-					temp = addTestFixture(done,clazz);
-					
-					for(ClassMemberSignature sig: temp)
-						done.add(sig);
-					
+					done.addAll(clazz.getTests().values());
+					done.addAll(clazz.getFixtures());
 					callee.getAbstractSyntax().translate(done);
 				}
+/*
+					for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
+						done.add(test.getValue());
+						test.getValue().getAbstractSyntax().translate(done);
+					}
+					
+					for(FixtureSignature fixture: clazz.getFixtures()){
+						done.add(fixture);
+						fixture.getAbstractSyntax().translate(done);
+					}
+				*/} 
 
-		}
+		
 
 		// we continue with the following blocks
 		for (Block follow: block.getFollows())
 			translateReferenced(follow, done, blocksDone);
 	}
-
-	private Set<ClassMemberSignature> addTestFixture(Set<ClassMemberSignature> done, ClassType clazz) {
-		
-		Map<String, TestSignature> map = clazz.getTests();
-		for(Map.Entry<String, TestSignature> entry: map.entrySet())
-			done.add(entry.getValue());
-		
-		Set<FixtureSignature> set = clazz.getFixtures();
-		for(FixtureSignature fixture: set)
-			done.add(fixture);
-		
-		return done;
-		
-	}
-	
-	
-
 
 
 }

@@ -88,7 +88,7 @@ public class Program {
 	 */
 
 	public void cleanUp() {
-		
+
 		sigs.clear();		
 		start.getCode().cleanUp(this);
 	}
@@ -194,21 +194,28 @@ public class Program {
 
 	/**
 	 * Generates the Java bytecode for all the class types and
-	 * dumps the relative {@code .class} files on the file system.
+	 * dumps the relative {@code Test.class} files on the file system.
 	 */
-	public void generataJavaBytecodeForTests(){
+	public void generateJavaBytecodeForTests(){
+
 		for (ClassType clazz: ClassType.getAll())
-			try {
-				JavaClassGenerator jcg = new TestClassGenerator(clazz, sigs);
-				jcg.getJavaClass().dump(clazz + "Test.class");
+
+			// if exists at least one test
+			if(!clazz.getTests().isEmpty()){
+								
+				try {
+					JavaClassGenerator jcg = new TestClassGenerator(clazz, sigs);
+					jcg.getJavaClass().dump(clazz + "Test.class");
+				}
+
+				catch (IOException e) {
+					System.out.println("Could not dump the Java bytecode for class " + clazz + "Test");
+				}
 			}
-		catch (IOException e) {
-			System.out.println("Could not dump the Java bytecode for class " + clazz);
-		}
 		
 	}
-	
-	
+
+
 	/**
 	 * Takes note that this program contains the given bytecode. This amounts
 	 * to adding some signature to the set of signatures for the program.

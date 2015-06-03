@@ -45,9 +45,14 @@ public class FixtureSignature extends CodeSignature {
 	}
 
 
-
+	/**
+	 * Adds to the given class generator a Java bytecode method for this fixture.
+	 *
+	 * @param classGen the generator of the class where the fixture lives
+	 */
 	public void createFixture(TestClassGenerator classGen) {
-		TypeList type = new TypeList( this.getDefiningClass().getObjectType(), null);
+		// we build the type of fixture
+		TypeList type = new TypeList(this.getDefiningClass(), TypeList.EMPTY);
 		
 		MethodGen methodGen = new MethodGen
 				(Constants.ACC_PRIVATE | Constants.ACC_STATIC, // private and static
@@ -56,7 +61,7 @@ public class FixtureSignature extends CodeSignature {
 						null, // parameters names: we do not care
 						null, // name of the fixture
 						classGen.getClassName(), // name of the class
-						classGen.generateJavaBytecode(getCode()), // bytecode of the test
+						classGen.generateJavaBytecode(new Block()), // bytecode of the test
 						classGen.getConstantPool()); // constant pool
 
 		// we must always call these methods before the getMethod()
@@ -68,4 +73,5 @@ public class FixtureSignature extends CodeSignature {
 		classGen.addMethod(methodGen.getMethod());
 	}
 
+	
 }
