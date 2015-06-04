@@ -107,9 +107,9 @@ public class Assert extends Command {
 		
 		MethodSignature method = classType.methodLookup("output", TypeList.EMPTY);
 		
-		Block temp = new NEWSTRING("assert test").followedBy(new VIRTUALCALL(classType, method).followedBy(continuation));
+		Block printString = new NEWSTRING("assert test").followedBy(new VIRTUALCALL(classType, method).followedBy(continuation));
 		
-		Block result = this.condition.translateAsTest(continuation, temp);
+		Block result = this.condition.translateAsTest(continuation, printString);
 				
 		return result;
 		

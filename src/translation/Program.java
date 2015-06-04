@@ -3,6 +3,7 @@ package translation;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javaBytecodeGenerator.JavaClassGenerator;
@@ -11,6 +12,7 @@ import javaBytecodeGenerator.TestClassGenerator;
 import types.ClassMemberSignature;
 import types.CodeSignature;
 import types.ClassType;
+import types.TestSignature;
 import bytecode.Bytecode;
 import bytecode.CALL;
 import bytecode.FieldAccessBytecode;
@@ -99,9 +101,12 @@ public class Program {
 	 */
 
 	public void dumpCodeDot() {
+
 		for (ClassMemberSignature sig: sigs){
+		
 			if (sig instanceof CodeSignature)
 				try {
+
 					dumpCodeDot((CodeSignature) sig, "./");
 				}catch (IOException e) {
 					System.out.println("Could not dump Kitten code for " + sig);
@@ -123,6 +128,7 @@ public class Program {
 	private void dumpCodeDot(CodeSignature sig, String dir) throws IOException {
 
 		if(sig != null){
+
 			try (FileWriter dot = new FileWriter(dir + sig + ".dot")) {
 				// the name of the graph
 				dot.write("digraph \"" + sig + "\" {\n");
@@ -130,6 +136,7 @@ public class Program {
 				// the size of a standard A4 sheet (in inches)
 				dot.write("size = \"11,7.5\";\n");
 
+				System.out.println(sig + " || nome: " + sig.getName() + " || code: " + sig.getCode() );
 				toDot(sig.getCode(), dot, new HashSet<Block>());
 
 				dot.write("}");
@@ -151,7 +158,7 @@ public class Program {
 
 	private String toDot(Block block, FileWriter where, Set<Block> done) throws IOException {
 		String name = block.dotNodeName();
-
+		
 		// did we already dumped the given block in the file?
 		if (!done.contains(block)) {
 			// we never dumped the block before: we add it to the set of already dumped blocks
@@ -170,6 +177,7 @@ public class Program {
 			for (Block follow: block.getFollows())
 				where.write(name + "->" + toDot(follow, where, done) + " [color = blue label = \"\" fontsize = 8]\n");
 		}
+
 
 		// we return the unique identifier of the block in the dot file
 		return name;
@@ -202,7 +210,7 @@ public class Program {
 
 			// if exists at least one test
 			if(!clazz.getTests().isEmpty()){
-								
+
 				try {
 					JavaClassGenerator jcg = new TestClassGenerator(clazz, sigs);
 					jcg.getJavaClass().dump(clazz + "Test.class");
@@ -212,7 +220,7 @@ public class Program {
 					System.out.println("Could not dump the Java bytecode for class " + clazz + "Test");
 				}
 			}
-		
+
 	}
 
 
@@ -224,11 +232,23 @@ public class Program {
 	 */
 
 	protected void storeBytecode(Bytecode bytecode) {
-		if (bytecode instanceof FieldAccessBytecode)
+		if (bytecode instanceof FieldAccessBytecode){
 			sigs.add(((FieldAccessBytecode) bytecode).getField());
-		else if (bytecode instanceof CALL)
+
+			sigs.addAll(((FieldAccessBytecode) bytecode).getField().getDefiningClass().getFixtures());
+			
+			for(Map.Entry<String, TestSignature> test: ((FieldAccessBytecode) bytecode).getField().getDefiningClass().getTests().entrySet())
+				sigs.add(test.getValue());
+
+		}else if (bytecode instanceof CALL){		
 			// a call instruction might call many methods or constructors at runtime
 			sigs.addAll(((CALL) bytecode).getDynamicTargets());
+			sigs.addAll( ((CALL) bytecode).getStaticTarget().getDefiningClass().getFixtures());
+			
+			for(Map.Entry<String, TestSignature> test: ((CALL) bytecode).getStaticTarget().getDefiningClass().getTests().entrySet())
+				sigs.add(test.getValue());
+
+		}
 
 	}
 }

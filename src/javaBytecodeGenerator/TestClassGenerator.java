@@ -36,6 +36,7 @@ public class TestClassGenerator extends JavaClassGenerator {
 		for (TestSignature test: clazz.getTests().values() )
 			if (sigs.contains(test))
 				test.createTest(this);
+		
 
 		// we add the fixtures
 		for (FixtureSignature fixture: clazz.getFixtures() )
@@ -76,8 +77,8 @@ public class TestClassGenerator extends JavaClassGenerator {
 
 		// we build an object that has the type of the class were the test is defined
 		NEW obj = new NEW(this.classType);
-
-		// ???????
+		
+		// translate obj to JB
 		il.append(obj.generateJavaBytecode(this));
 
 		for(FixtureSignature fixture: this.classType.getFixtures())
@@ -100,10 +101,6 @@ public class TestClassGenerator extends JavaClassGenerator {
 		return il;
 	}
 
-	private Block getCode(){
-		Block res = new Block();
 
-		return res;
-	}
 
 }

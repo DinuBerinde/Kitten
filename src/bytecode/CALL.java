@@ -3,7 +3,6 @@ package bytecode;
 import java.util.Set;
 
 import types.CodeSignature;
-import types.TestSignature;
 import types.Type;
 
 /**

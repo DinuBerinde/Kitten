@@ -14,7 +14,7 @@ import translation.Block;
  * @author Dinu
  */
 public class FixtureSignature extends CodeSignature {
-	private static int counter = 0;
+	private static int counter = 1;
 	private final int identifier;
 
 	/**
@@ -26,16 +26,15 @@ public class FixtureSignature extends CodeSignature {
 	 */
 	public FixtureSignature(ClassType clazz, CodeDeclaration abstractSyntax) {
 
-		super(clazz, VoidType.INSTANCE, TypeList.EMPTY, "fixture", abstractSyntax);
+		super(clazz, VoidType.INSTANCE, TypeList.EMPTY, "fixture" + counter, abstractSyntax);
 
 		this.identifier = counter++;
 	}
 
 
-
 	@Override
 	public String toString() {
-		return getDefiningClass() + "." + "Fixture:" + identifier ;			
+		return getDefiningClass()  + "Fixture:" + identifier ;			
 	}
 
 	@Override
@@ -43,6 +42,7 @@ public class FixtureSignature extends CodeSignature {
 
 		return code;
 	}
+
 
 
 	/**
@@ -53,15 +53,15 @@ public class FixtureSignature extends CodeSignature {
 	public void createFixture(TestClassGenerator classGen) {
 		// we build the type of fixture
 		TypeList type = new TypeList(this.getDefiningClass(), TypeList.EMPTY);
-		
+
 		MethodGen methodGen = new MethodGen
 				(Constants.ACC_PRIVATE | Constants.ACC_STATIC, // private and static
 						org.apache.bcel.generic.Type.VOID, // return type
 						type.toBCEL(), // parameters types 
 						null, // parameters names: we do not care
-						null, // name of the fixture
+						this.getName() , // name of the fixture
 						classGen.getClassName(), // name of the class
-						classGen.generateJavaBytecode(new Block()), // bytecode of the test
+						classGen.generateJavaBytecode(this.getCode()), // bytecode of the test
 						classGen.getConstantPool()); // constant pool
 
 		// we must always call these methods before the getMethod()
@@ -69,9 +69,9 @@ public class FixtureSignature extends CodeSignature {
 		// elements used by the code of the method
 		methodGen.setMaxStack();
 		methodGen.setMaxLocals();
-		
+
 		classGen.addMethod(methodGen.getMethod());
 	}
 
-	
+
 }

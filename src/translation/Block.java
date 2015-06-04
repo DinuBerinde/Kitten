@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import types.ClassType;
 import types.CodeSignature;
 import types.FixtureSignature;
 import types.TestSignature;
@@ -236,7 +235,7 @@ public class Block {
 		cleanUp(new HashSet<Block>(), program);
 	}
 
-	
+
 	/**
 	 * Auxiliary method that cleans-up this block and all those reachable
 	 * from it. It removes useless {@code nop}'s and merges a block, with only
@@ -247,18 +246,10 @@ public class Block {
 	 */
 
 	private void cleanUp(Set<Block> done, Program program) {
-		ClassType clazz = program.getStart().getDefiningClass();
 
 		if (!done.contains(this)) {
 			done.add(this);
-			
-					
-			for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet())
-				done.add(test.getValue().getCode());
-			
-			for(FixtureSignature fixture: clazz.getFixtures())
-				done.add(fixture.getCode());
-			
+
 			List<Block> newFollows = new ArrayList<>();
 
 			// we consider each successor and remove isolated nop's
@@ -268,13 +259,13 @@ public class Block {
 					newFollows.addAll(follow.follows);
 				else
 					newFollows.add(follow);
-			
+
 			follows = newFollows;
 
 			// we continue with the successors
 			for (Block follow: follows)
 				follow.cleanUp(done,program);
-
+			
 			// if the bytecode contains a reference to a field or to a
 			// constructor or to a method, we add it to the signatures
 			// for the program and update its statistics
@@ -287,15 +278,15 @@ public class Block {
 				if (bytecode instanceof CALL)
 					// we continue by cleaning the dynamic targets
 					for (CodeSignature target: ((CALL) bytecode).getDynamicTargets()){	
-						
-						
-						for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet())
+		
+						for(Map.Entry<String, TestSignature> test: target.getDefiningClass().getTests().entrySet())
 							done.add(test.getValue().getCode());
-						
-						for(FixtureSignature fixture: clazz.getFixtures())
+
+						for(FixtureSignature fixture: target.getDefiningClass().getFixtures())
 							done.add(fixture.getCode());
-						
+
 						target.getCode().cleanUp(done,program);
+						
 					}
 			}
 

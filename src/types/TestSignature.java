@@ -32,7 +32,7 @@ public class TestSignature extends CodeSignature {
 
 	@Override
 	public String toString() {
-		return getDefiningClass() + ".Test:" + name;
+		return getDefiningClass() + "Test:" + name;
 	}
 
 
@@ -58,7 +58,7 @@ public class TestSignature extends CodeSignature {
 						null, // parameters names: we do not care
 						name, // name of the test
 						classGen.getClassName(), // name of the class
-						classGen.generateJavaBytecode(new Block()), // bytecode of the test
+						classGen.generateJavaBytecode(this.getCode()), // bytecode of the test
 						classGen.getConstantPool()); // constant pool
 
 		// we must always call these methods before the getMethod()

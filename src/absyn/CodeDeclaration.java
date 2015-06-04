@@ -8,7 +8,6 @@ import translation.Block;
 import types.ClassMemberSignature;
 import types.ClassType;
 import types.CodeSignature;
-import types.FieldSignature;
 import types.FixtureSignature;
 import types.TestSignature;
 import types.VoidType;
@@ -109,7 +108,7 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 
 
 	/**
-	 * Translates this constructor or method into intermediate Kitten code.
+	 * Translates this constructor or method or fixture or test into intermediate Kitten code.
 	 * This amounts to translating its body with a continuation containing
 	 * a {@code return} bytecode. This way, if a method does not have an
 	 * explicit {@code return} statement, it is automatically put at its end.
@@ -118,18 +117,8 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 	 */
 
 	public void translate(Set<ClassMemberSignature> done) {
-		
+
 		if (done.add(sig)) {
-		
-			done.addAll(sig.getDefiningClass().getTests().values());
-			done.addAll(sig.getDefiningClass().getFixtures());	
-			/*for(Map.Entry<String, TestSignature> test: sig.getDefiningClass().getTests().entrySet())
-				done.add(test.getValue());
-		
-			
-			for(FixtureSignature fixture: sig.getDefiningClass().getFixtures())
-				done.add(fixture);*/
-					
 			// we translate the body of the constructor or
 			// method with a block containing RETURN as continuation. This way,
 			// all methods returning void and
@@ -146,6 +135,7 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 		}
 	}
 
+
 	/**
 	 * Auxiliary method that translates into Kitten bytecode all class members that are
 	 * referenced from the given block and the blocks reachable from it.
@@ -156,74 +146,35 @@ public abstract class CodeDeclaration extends ClassMemberDeclaration {
 	 */
 
 	private void translateReferenced(Block block, Set<ClassMemberSignature> done, Set<Block> blocksDone) {
-		
+
 		// if we already processed the block, we return immediately
 		if (!blocksDone.add(block))
 			return;
-		
+
 		for (BytecodeList cursor = block.getBytecode(); cursor != null; cursor = cursor.getTail()) {
 			Bytecode h = cursor.getHead();
-			
 
-			if (h instanceof GETFIELD){
-				FieldSignature field = ((GETFIELD) h).getField();
-				ClassType clazz = field.getDefiningClass();
-				
-				done.addAll(clazz.getTests().values());
-				done.addAll(clazz.getFixtures());
+			if (h instanceof GETFIELD)
 				done.add(((GETFIELD) h).getField());
-				
-				
-			/*	
-				for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
-					done.add(test.getValue());
-					test.getValue().getAbstractSyntax().translate(done);
-				}
-				
-				for(FixtureSignature fixture: clazz.getFixtures()){
-					done.add(fixture);
-					fixture.getAbstractSyntax().translate(done);
-				}*/
-					
-			}else if (h instanceof PUTFIELD){
-				FieldSignature field = ((PUTFIELD) h).getField();
-				ClassType clazz = field.getDefiningClass();
-				
-				done.addAll(clazz.getTests().values());
-				done.addAll(clazz.getFixtures());
+			
+			else if (h instanceof PUTFIELD)
 				done.add(((PUTFIELD) h).getField());
-			/*	
-				for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
-					done.add(test.getValue());
-					test.getValue().getAbstractSyntax().translate(done);
-				}
-				
-				for(FixtureSignature fixture: clazz.getFixtures()){
-					done.add(fixture);
-					fixture.getAbstractSyntax().translate(done);
-				} */
-								
-			}else if (h instanceof CALL)
+	
+			else if (h instanceof CALL)
 				for (CodeSignature callee: ((CALL) h).getDynamicTargets()){		
 					ClassType clazz = callee.getDefiningClass();
-					done.addAll(clazz.getTests().values());
-					done.addAll(clazz.getFixtures());
+
 					callee.getAbstractSyntax().translate(done);
-				}
-/*
-					for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet()){
-						done.add(test.getValue());
-						test.getValue().getAbstractSyntax().translate(done);
-					}
-					
-					for(FixtureSignature fixture: clazz.getFixtures()){
-						done.add(fixture);
-						fixture.getAbstractSyntax().translate(done);
-					}
-				*/} 
-
 		
+					for(Map.Entry<String, TestSignature> test: clazz.getTests().entrySet())
+						test.getValue().getAbstractSyntax().translate(done);
 
+					for(FixtureSignature fixture: clazz.getFixtures())				
+						fixture.getAbstractSyntax().translate(done);
+
+				} 
+		}
+		
 		// we continue with the following blocks
 		for (Block follow: block.getFollows())
 			translateReferenced(follow, done, blocksDone);

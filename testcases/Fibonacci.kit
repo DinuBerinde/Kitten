@@ -3,16 +3,29 @@ class Fibonacci {
  	constructor() {}
 	
 	fixture
-	 this.n := 10 
-	 
+		this.n := 10 
+	
+	fixture 
+		this.n := 11
+	fixture 
+	 	this.n := 12
+	 	
 	method int fib(int n)
     	if (n = 0 | n = 1) then return 1
     	else return this.fib(n - 1) + this.fib(n - 2)
 
+	test abc{this.n := 6}
+	
+	test def{
+		this.n := this.fib(4);
+		this.n := 6
+	}
+	
 	method int arr(){
 		this.n := 10;
 		return this.n
 	}
+
 
 	test fibonacci{
   		this.n := this.fib(4);
@@ -26,7 +39,7 @@ class Fibonacci {
 	Fibonacci temp := new Fibonacci();
 	
 	temp.n := 10;
-    int res := temp.fib(1);
+    int res := temp.fib(10);
 
     "Fibonacci  Fib(x) = ".concat(res).output()
 
