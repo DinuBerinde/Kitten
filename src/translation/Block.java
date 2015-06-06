@@ -233,6 +233,7 @@ public class Block {
 		program.getSigs().add(program.getStart());
 
 		cleanUp(new HashSet<Block>(), program);
+		
 	}
 
 

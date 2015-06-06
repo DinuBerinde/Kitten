@@ -42,25 +42,7 @@ public class Main {
 		}
 
 		System.out.println("Total compilation time was " + (System.currentTimeMillis() - totalTime) + "ms");
-
-		
-		// we print the results of the tests 
-		System.out.println("Test execution for class " + clazz.getName() + ":");
-		
-	/*	Map<String, TestSignature> tests = clazz.getTests();
-		
-		for(Map.Entry<String, TestSignature> test: tests.entrySet())
-			
-			System.out.println("\t" + "- " + test.getKey() + ":");*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 		
 	}
 }

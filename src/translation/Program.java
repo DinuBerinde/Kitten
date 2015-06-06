@@ -136,7 +136,6 @@ public class Program {
 				// the size of a standard A4 sheet (in inches)
 				dot.write("size = \"11,7.5\";\n");
 
-				System.out.println(sig + " || nome: " + sig.getName() + " || code: " + sig.getCode() );
 				toDot(sig.getCode(), dot, new HashSet<Block>());
 
 				dot.write("}");

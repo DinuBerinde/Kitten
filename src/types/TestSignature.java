@@ -14,7 +14,8 @@ import translation.Block;
  */
 public class TestSignature extends CodeSignature {
 	private final String name;
-
+	private String assertName;
+	
 	/**
 	 * Constructs the signature of a test with the given name, return type
 	 * and parameters types.
@@ -35,10 +36,16 @@ public class TestSignature extends CodeSignature {
 		return getDefiningClass() + "Test:" + name;
 	}
 
+public void assertName(String name){
+	this.assertName = name;
+}
 
+public String getAssertName(){
+	return assertName;
+}
 	@Override
 	protected Block addPrefixToCode(Block code) {
-
+	
 		return code;
 	}
 

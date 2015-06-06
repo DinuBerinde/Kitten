@@ -44,7 +44,6 @@ public class FixtureSignature extends CodeSignature {
 	}
 
 
-
 	/**
 	 * Adds to the given class generator a Java bytecode method for this fixture.
 	 *

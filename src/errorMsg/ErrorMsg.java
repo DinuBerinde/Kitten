@@ -112,8 +112,7 @@ public class ErrorMsg {
 	 * @return
 	 */
 	public String getErrRowCol(int pos){
-		anyErrors = true; // an error has been reported at least
-
+		
 		String where;
 		if (pos >= 0) {
 			int last = 0, n = 1;

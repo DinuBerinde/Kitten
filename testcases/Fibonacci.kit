@@ -7,6 +7,7 @@ class Fibonacci {
 	
 	fixture 
 		this.n := 11
+		
 	fixture 
 	 	this.n := 12
 	 	
@@ -14,25 +15,32 @@ class Fibonacci {
     	if (n = 0 | n = 1) then return 1
     	else return this.fib(n - 1) + this.fib(n - 2)
 
-	test abc{this.n := 6}
-	
-	test def{
-		this.n := this.fib(4);
-		this.n := 6
+	test add{
+		int i := 5;
+		int sum := 5 + i;
+		
+		assert(sum = 20);   /* expected error */
+		assert(sum = 10) 
 	}
 	
-	method int arr(){
+	test comparison{	
+	
+		assert(2 < 1);	  /* expected error */
+		assert(1 < 2)
+	}
+	
+	
+	test fibonacci{
+  		this.n := this.fib(4);
+  		
+  		assert(this.n < 1);    /* expected error */
+  		assert(this.n > 1)
+   }
+ 	
+  	method int arr(){
 		this.n := 10;
 		return this.n
 	}
-
-
-	test fibonacci{
-  		this.n := this.fib(4);
-  		/*assert(true);*/
-  		this.n := 6
-   }
- 	
   	
  
  method void main() {

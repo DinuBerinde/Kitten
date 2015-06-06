@@ -20,11 +20,9 @@ public class Assert extends Command {
 	/**
 	 * The guard or condition of the loop.
 	 */
-	private Expression condition;
+	private final Expression condition;
 	private String failedAssert;
-	private String className;
-	private String where;
-	
+
 
 	/**
 	 * Constructs the abstract syntax of an assert command.
@@ -54,17 +52,19 @@ public class Assert extends Command {
 		// the condition must be a Boolean expression
 		this.condition.mustBeBoolean(checker);		
 
-		className = this.getTypeChecker().getVar("this").toString();
-		
-		// error riga.col
-		where = checker.getErrRowCol(this.getPos());
-		
-		failedAssert = "test fallito @" + className + ".kit" + where;
-		
-		String err = "";
-		err += "Illegal assert inside " + name;
+		// class name
+		String className = this.getTypeChecker().getVar("this").toString();
 
-		// se l'assert non è permesso
+		// error row.col
+		String where = checker.getErrRowCol(this.getPos());
+
+		// the failed assert string
+		failedAssert = "test fallito @" + className + ".kit:" + where + "\n";
+
+		
+		// in case of a semantical error
+		String err = "Illegal assert inside " + name;
+
 		if(!checker.isAssertAllowed())
 			error(checker, err);
 
@@ -80,10 +80,10 @@ public class Assert extends Command {
 	public Expression getCondition() {
 		return condition;
 	}
-	
+
 	@Override
 	public boolean checkForDeadcode() {
-		
+
 		return false;
 	}
 
@@ -92,7 +92,7 @@ public class Assert extends Command {
 	protected void toDotAux(FileWriter where) throws java.io.IOException {
 		linkToNode("condition", condition.toDot(where), where);
 	}
-	
+
 	/**
 	 * Translates this command into intermediate Kitten bytecode. Namely,
 	 * it returns a code which evaluates the {@link #condition} 
@@ -102,17 +102,15 @@ public class Assert extends Command {
 	 */
 
 	@Override
-	public Block translate(Block continuation) {		
+	public Block translate(Block continuation) {
 		ClassType classType = ClassType.mk("String");
-		
 		MethodSignature method = classType.methodLookup("output", TypeList.EMPTY);
-		
-		Block printString = new NEWSTRING("assert test").followedBy(new VIRTUALCALL(classType, method).followedBy(continuation));
-		
-		Block result = this.condition.translateAsTest(continuation, printString);
-				
-		return result;
-		
+
+		continuation.doNotMerge();
+		Block printString = new VIRTUALCALL(classType, method).followedBy(continuation);
+	
+		return this.condition.translateAsTest(continuation, new NEWSTRING(failedAssert).followedBy(printString));
+
 	}
 
 }
