@@ -59,7 +59,6 @@ public class TestDeclaration extends CodeDeclaration {
 	@Override
 	protected void addTo(ClassType clazz) {
 		this.sig = new TestSignature(clazz, name, this);
-		this.sig.assertName(this.getBody().dotNodeName());
 		clazz.addTest(name, sig);
 		
 		this.setSignature(sig);

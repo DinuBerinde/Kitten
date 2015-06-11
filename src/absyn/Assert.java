@@ -17,9 +17,7 @@ import types.TypeList;
  */
 
 public class Assert extends Command {
-	/**
-	 * The guard or condition of the loop.
-	 */
+
 	private final Expression condition;
 	private String failedAssert;
 
@@ -59,7 +57,7 @@ public class Assert extends Command {
 		String where = checker.getErrRowCol(this.getPos());
 
 		// the failed assert string
-		failedAssert = "test fallito @" + className + ".kit:" + where + "\n";
+		failedAssert = "test fallito @" + className + ".kit: " + where + "\n";
 
 		
 		// in case of a semantical error
@@ -105,7 +103,7 @@ public class Assert extends Command {
 	public Block translate(Block continuation) {
 		ClassType classType = ClassType.mk("String");
 		MethodSignature method = classType.methodLookup("output", TypeList.EMPTY);
-
+				
 		continuation.doNotMerge();
 		Block printString = new VIRTUALCALL(classType, method).followedBy(continuation);
 	

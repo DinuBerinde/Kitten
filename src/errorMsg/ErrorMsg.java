@@ -125,7 +125,7 @@ public class ErrorMsg {
 				n++;
 			}
 
-			where = n + "." + (pos - last);
+			where = n + "::" + (pos - last);
 		}
 		else
 			where = "";
