@@ -212,18 +212,15 @@ public class TestClassGenerator extends JavaClassGenerator {
 
 
 			// we save the time that passed for this test
-			FieldGen fieldTime = new FieldGen(Constants.ACC_PUBLIC | Constants.ACC_STATIC, Type.DOUBLE, test.getName() + "Time", this.getConstantPool());
+			FieldGen fieldTime = new FieldGen(Constants.ACC_PRIVATE | Constants.ACC_STATIC, Type.DOUBLE, test.getName() + "Time", this.getConstantPool());
 			this.addField(fieldTime.getField());
-
 			il.append(getFactory().createInvoke("java.lang.System", "currentTimeMillis", Type.LONG,	Type.NO_ARGS, Constants.INVOKESTATIC));
 			il.append(getFactory().createCast(Type.LONG, Type.DOUBLE));
 			il.append(getFactory().createConstant(1.00));
 			il.append(new DDIV());
 			il.append(new DLOAD(indexTime));
 			il.append(new DSUB());
-
 			il.append(getFactory().createPutStatic(getClassName(), test.getName() + "Time", Type.DOUBLE));
-
 
 			// we increment the number of totalTests
 			il.append(getFactory().createGetStatic(getClassName(), "totalTests", Type.INT));
@@ -231,20 +228,14 @@ public class TestClassGenerator extends JavaClassGenerator {
 			il.append(new IADD());
 			il.append(getFactory().createPutStatic(getClassName(), "totalTests", Type.INT));
 
-
 			// we create a field with the name of the test 
-			FieldGen fieldGen1 = new FieldGen(Constants.ACC_PUBLIC | Constants.ACC_STATIC, Type.STRING, test.getName(), this.getConstantPool());
-
+			FieldGen fieldGen1 = new FieldGen(Constants.ACC_PRIVATE | Constants.ACC_STATIC, Type.STRING, test.getName(), this.getConstantPool());
 			this.addField(fieldGen1.getField());
 			il.append(new PUSH(this.getConstantPool(), "\t -" + test.getName() + ": passed ["));
 			il.append(getFactory().createPutStatic(getClassName(), test.getName(), Type.STRING));
-
 			// we save the name of the failed test
 			il.append(getFactory().createGetStatic(getClassName(), "flag", Type.STRING));	
 			il.append(getFactory().createPutStatic(getClassName(), test.getName(), Type.STRING));
-
-			il.append(new PUSH(this.getConstantPool(), "\t -" + test.getName() + ": passed ["));
-			il.append(getFactory().createPutStatic(getClassName(), "flag", Type.STRING));
 
 		}
 
